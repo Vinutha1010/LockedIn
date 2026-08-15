@@ -5,116 +5,20 @@ import type {
   AnswerFeedback,
   CandidateAnswer,
   TranscriptItem,
+  SessionReport,
 } from '@/types'
+import { QUESTION_BANK } from '@/data/questions'
+import { evaluateCandidateSubmission } from '@/lib/evaluator'
 
-const DEFAULT_MOCK_QUESTIONS: Question[] = [
-  {
-    id: 'q-1',
-    title: 'Design a Distributed Rate Limiter',
-    description:
-      'Explain how you would design a distributed rate limiter for a high-scale microservices architecture handling over 100,000 requests/second. Discuss token bucket vs sliding window log algorithms, storage considerations (e.g., Redis cluster), race conditions, and handling edge cases with network partitions.',
-    roundType: 'system-design',
-    difficulty: 'senior',
-    category: 'System Design & Scalability',
-    hints: [
-      'Consider the memory footprint of Sliding Window Counter vs Token Bucket.',
-      'How would you handle Redis replication latency or atomic increment with Lua scripts?',
-      'What fallback strategy should client gateways adopt if the central Redis cache is unreachable?',
-    ],
-    starterCode: `// Pseudo-code or architecture outline for Distributed Rate Limiter
-class RateLimiter {
-  constructor(private redisClient: any, private limit: number, private windowMs: number) {}
-
-  async isAllowed(userId: string): Promise<{ allowed: boolean; remaining: number }> {
-    const key = \`rate_limit:\${userId}\`;
-    const currentTime = Date.now();
-    
-    // TODO: Implement atomic Lua script execution with Redis
-    return { allowed: true, remaining: this.limit - 1 };
-  }
-}`,
-    language: 'typescript',
-    expectedComplexity: {
-      time: 'O(1) lookup & update with Redis Lua',
-      space: 'O(N) where N is active user keys',
-    },
-    rubricCriteria: [
-      'Clarification of requirements (concurrency, throughput, accuracy vs latency trade-offs)',
-      'Selection and justification of rate limiting algorithm',
-      'High-level architecture (API Gateway, Redis cache cluster, fallback mechanisms)',
-      'Deep dive into concurrency (race conditions, Lua scripting, Redis multi/exec)',
-    ],
-    timeLimitMinutes: 15,
-  },
-  {
-    id: 'q-2',
-    title: 'Two Sum II - Input Array Is Sorted',
-    description:
-      'Given a 1-indexed array of integers `numbers` that is already sorted in non-decreasing order, find two numbers such that they add up to a specific `target` number. Return the indices of the two numbers, `[index1, index2]`, added by one as an integer array [index1, index2] of length 2.\n\nYou may not use the same element twice. Your solution must use only O(1) extra space.',
-    roundType: 'coding',
-    difficulty: 'medium',
-    category: 'Algorithms & Two Pointers',
-    hints: [
-      'Since the array is sorted, how can two pointers from the left and right boundaries guide your search?',
-      'If numbers[left] + numbers[right] > target, which pointer should move?',
-    ],
-    starterCode: `function twoSum(numbers: number[], target: number): number[] {
-  let left = 0;
-  let right = numbers.length - 1;
-
-  while (left < right) {
-    const sum = numbers[left] + numbers[right];
-    if (sum === target) {
-      return [left + 1, right + 1];
-    } else if (sum < target) {
-      left++;
-    } else {
-      right--;
-    }
-  }
-
-  return [];
-}`,
-    language: 'typescript',
-    expectedComplexity: {
-      time: 'O(N)',
-      space: 'O(1)',
-    },
-    rubricCriteria: [
-      'Correct two-pointer implementation',
-      'Edge cases (empty, minimal elements, negative numbers)',
-      'O(1) space constraint compliance',
-    ],
-    timeLimitMinutes: 10,
-  },
-  {
-    id: 'q-3',
-    title: 'Resolving Technical Disagreements in Engineering Teams',
-    description:
-      'Tell me about a time when you and a principal engineer or team lead disagreed strongly on a technical architecture or library choice. How did you advocate for your point of view, how was the final decision made, and what was the outcome?',
-    roundType: 'behavioral',
-    difficulty: 'senior',
-    category: 'Behavioral & Leadership',
-    hints: [
-      'Structure using STAR method: Situation, Task, Action, Result.',
-      'Emphasize data-driven decision making, prototyping/benchmarking, and "disagree and commit".',
-    ],
-    rubricCriteria: [
-      'Clarity and structure using STAR framework',
-      'Demonstration of empathy, active listening, and technical maturity',
-      'Focus on team cohesion and business goals over ego',
-    ],
-    timeLimitMinutes: 8,
-  },
-]
+const DEFAULT_MOCK_QUESTIONS: Question[] = QUESTION_BANK.slice(0, 3)
 
 export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
   sessionId: 'session-' + Math.random().toString(36).substring(2, 9),
   candidateName: 'Alex Chen',
-  targetRole: 'Senior Fullstack & Distributed Systems Engineer',
-  companyTarget: 'Meta / Stripe tier',
-  roundType: 'technical',
-  difficulty: 'senior',
+  targetRole: 'Software Engineer (SDE)',
+  companyTarget: 'Top Tech / SDE',
+  roundType: 'dsa',
+  difficulty: 'mid',
   questions: DEFAULT_MOCK_QUESTIONS,
   currentQuestionIndex: 0,
   sessionStatus: 'idle',
@@ -131,15 +35,15 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
   candidateVideoEnabled: true,
 
   // Code & Language
-  activeCode: DEFAULT_MOCK_QUESTIONS[0].starterCode || '',
-  activeLanguage: DEFAULT_MOCK_QUESTIONS[0].language || 'typescript',
+  activeCode: DEFAULT_MOCK_QUESTIONS[0]?.starterCode || '',
+  activeLanguage: DEFAULT_MOCK_QUESTIONS[0]?.language || 'typescript',
 
   // Transcripts & Feedbacks
   transcripts: [
     {
       id: 'tr-0',
       speaker: 'ai',
-      text: "Welcome Alex! I'm your AI interviewer today for the Senior Fullstack & Distributed Systems Engineer loop. Let's start with our first question on system architecture. When you're ready, take a look at the prompt.",
+      text: "Welcome Alex! I'm your AI interviewer today. Let's start with our first question. When you're ready, review the prompt in the workspace and begin.",
       timestamp: '00:00',
     },
   ],
@@ -148,17 +52,62 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
   isFeedbackPanelOpen: false,
   activeTab: 'workspace',
 
+  // Reports & History
+  currentReport: null,
+  pastReports: (() => {
+    try {
+      const saved = localStorage.getItem('lockedin_past_reports')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })(),
+
   initSession: (params) => {
     set((state) => {
       const questions = params?.questions || state.questions
       const initialCode = questions[0]?.starterCode || ''
       const initialLang = questions[0]?.language || 'typescript'
+      const newSessionId = params?.sessionId || 'session-' + Math.random().toString(36).substring(2, 9)
       return {
         ...state,
         ...params,
+        sessionId: newSessionId,
         activeCode: initialCode,
         activeLanguage: initialLang,
       }
+    })
+  },
+
+  launchQuestionSession: (questionOrQuestions) => {
+    const questionsList = Array.isArray(questionOrQuestions) ? questionOrQuestions : [questionOrQuestions]
+    const primaryQ = questionsList[0]
+    const totalMinutes = questionsList.reduce((acc, q) => acc + (q.timeLimitMinutes || 15), 0)
+    const newSessionId = 'session-' + Math.random().toString(36).substring(2, 9)
+
+    set({
+      sessionId: newSessionId,
+      questions: questionsList,
+      currentQuestionIndex: 0,
+      roundType: primaryQ.roundType,
+      difficulty: primaryQ.difficulty,
+      sessionStatus: 'in-progress',
+      isTimerRunning: true,
+      timeElapsedSeconds: 0,
+      timeRemainingSeconds: totalMinutes * 60,
+      activeCode: primaryQ.starterCode || '',
+      activeLanguage: primaryQ.language || 'typescript',
+      answers: {},
+      feedbacks: {},
+      isFeedbackPanelOpen: false,
+      transcripts: [
+        {
+          id: 'tr-0',
+          speaker: 'ai',
+          text: `Welcome! Today we are practicing "${primaryQ.title}". Please read the problem description, take a moment to formulate your thoughts or architecture, and begin when you're ready.`,
+          timestamp: '00:00',
+        },
+      ],
     })
   },
 
@@ -176,6 +125,189 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
 
   endSession: () => {
     set({ sessionStatus: 'completed', isTimerRunning: false })
+  },
+
+  completeAndGenerateReport: () => {
+    const state = get()
+    const {
+      sessionId,
+      candidateName,
+      targetRole,
+      companyTarget,
+      roundType,
+      difficulty,
+      questions,
+      answers,
+      feedbacks,
+      transcripts,
+      timeElapsedSeconds,
+    } = state
+
+    // Build question summaries using real answers and feedbacks
+    const questionSummaries = questions.map((q) => {
+      const ans = answers[q.id]
+      let fb = feedbacks[q.id]
+
+      if (!fb) {
+        // If candidate submitted code/notes but hadn't clicked individual evaluation before finishing
+        if (ans && (ans.code || ans.speechText)) {
+          fb = evaluateCandidateSubmission(q, ans)
+        } else {
+          // Question was skipped or unattempted
+          fb = {
+            questionId: q.id,
+            overallScore: 0,
+            technicalScore: 0,
+            communicationScore: 0,
+            problemSolvingScore: 0,
+            codeQualityScore: 0,
+            strengths: [],
+            weaknesses: ['Question was skipped or unattempted during the mock loop.'],
+            suggestions: ['Attempt all questions in the loop to maximize overall evaluation score.'],
+            modelAnswerSummary: q.hints?.[0] || 'Optimal solution uses modular logic with verified complexity.',
+            evaluatedAt: new Date().toISOString(),
+            status: 'completed',
+          }
+        }
+      }
+
+      return {
+        question: q,
+        answer: ans,
+        feedback: fb,
+      }
+    })
+
+    const totalQuestions = questionSummaries.length || 1
+    const attemptedQuestions = questionSummaries.filter((q) => (q.feedback?.overallScore || 0) > 0)
+    const attemptedCount = attemptedQuestions.length
+
+    // Calculate aggregated scores across all questions in the loop (unanswered questions count as 0)
+    const totalScoreSum = questionSummaries.reduce((sum, item) => sum + (item.feedback?.overallScore || 0), 0)
+    const overallScore = Math.round(totalScoreSum / totalQuestions)
+
+    const avgTech = Math.round(
+      questionSummaries.reduce((sum, item) => sum + (item.feedback?.technicalScore || 0), 0) / totalQuestions
+    )
+    const avgComm = Math.round(
+      questionSummaries.reduce((sum, item) => sum + (item.feedback?.communicationScore || 0), 0) / totalQuestions
+    )
+    const avgProb = Math.round(
+      questionSummaries.reduce((sum, item) => sum + (item.feedback?.problemSolvingScore || 0), 0) / totalQuestions
+    )
+    const avgCode = Math.round(
+      questionSummaries.reduce((sum, item) => sum + (item.feedback?.codeQualityScore || 0), 0) / totalQuestions
+    )
+    const avgArch = Math.round(avgTech * 0.5 + avgProb * 0.5)
+
+    // Determine Hiring Decision
+    let hiringDecision: import('@/types').HiringDecision = 'needs-work'
+    if (attemptedCount === 0 || overallScore < 45) {
+      hiringDecision = 'needs-work'
+    } else if (overallScore >= 85 && attemptedCount === totalQuestions) {
+      hiringDecision = 'strong-hire'
+    } else if (overallScore >= 68) {
+      hiringDecision = 'hire'
+    } else {
+      hiringDecision = 'lean-hire'
+    }
+
+    const percentileRank =
+      attemptedCount === 0
+        ? 5
+        : Math.min(99, Math.max(15, Math.round(overallScore * 1.05)))
+
+    // Extract unique strengths & weaknesses
+    const allStrengths = Array.from(
+      new Set(questionSummaries.flatMap((q) => q.feedback?.strengths || []))
+    ).filter(Boolean).slice(0, 4) as string[]
+
+    const allGrowthAreas = Array.from(
+      new Set(questionSummaries.flatMap((q) => q.feedback?.weaknesses || []))
+    ).filter(Boolean).slice(0, 3) as string[]
+
+    const allSuggestions = Array.from(
+      new Set(questionSummaries.flatMap((q) => q.feedback?.suggestions || []))
+    ).filter(Boolean).slice(0, 3) as string[]
+
+    let summaryHeadline = ''
+    let summaryNotes = ''
+
+    if (attemptedCount === 0) {
+      summaryHeadline = 'Incomplete Session: No questions were submitted for evaluation during this mock loop.'
+      summaryNotes = `${candidateName} finished the interview session after ${Math.floor(timeElapsedSeconds / 60)} minutes without submitting answers for the ${totalQuestions} problem stages.`
+    } else {
+      summaryHeadline =
+        hiringDecision === 'strong-hire'
+          ? `Outstanding performance across all ${totalQuestions} stages with clean code and optimal problem solving.`
+          : hiringDecision === 'hire'
+          ? `Solid technical performance meeting core interview benchmarks across ${attemptedCount} of ${totalQuestions} questions.`
+          : `Attempted ${attemptedCount} of ${totalQuestions} questions. Core logic demonstrated but needs more complete solutions.`
+
+      summaryNotes = `${candidateName} completed ${attemptedCount} of ${totalQuestions} questions in ${Math.floor(timeElapsedSeconds / 60)} minutes targeting ${targetRole}. Evaluated with highest marks in ${avgTech >= avgProb ? 'Data Structures & Algorithms' : 'Problem Solving & Logic'}.`
+    }
+
+    const report: SessionReport = {
+      sessionId,
+      candidateName,
+      targetRole,
+      companyTarget: companyTarget || 'Tier 1 Tech',
+      roundType,
+      difficulty,
+      completedAt: new Date().toISOString(),
+      timeSpentSeconds: timeElapsedSeconds,
+      totalTimeAllocatedSeconds: 2700,
+      overallScore,
+      hiringDecision,
+      percentileRank,
+      summaryHeadline,
+      summaryNotes,
+      dimensions: [
+        { dimension: 'Data Structures & Algorithms', score: avgTech, benchmark: 76, fullMark: 100 },
+        { dimension: 'CS Core Fundamentals', score: avgArch, benchmark: 72, fullMark: 100 },
+        { dimension: 'Problem Solving & Logic', score: avgProb, benchmark: 74, fullMark: 100 },
+        { dimension: 'Code Quality & Cleanliness', score: avgCode, benchmark: 80, fullMark: 100 },
+        { dimension: 'Communication & Articulation', score: avgComm, benchmark: 78, fullMark: 100 },
+      ],
+      questionSummaries,
+      topStrengths: allStrengths,
+      keyGrowthAreas: allGrowthAreas,
+      recommendedNextSteps: allSuggestions,
+      transcripts,
+    }
+
+    // Persist to past reports in state & localStorage
+    const updatedPast = [report, ...state.pastReports.filter((r) => r.sessionId !== sessionId)]
+    try {
+      localStorage.setItem('lockedin_past_reports', JSON.stringify(updatedPast))
+      localStorage.setItem(`lockedin_report_${sessionId}`, JSON.stringify(report))
+    } catch (e) {
+      console.warn('Failed to save report to localStorage', e)
+    }
+
+    set({
+      sessionStatus: 'completed',
+      isTimerRunning: false,
+      currentReport: report,
+      pastReports: updatedPast,
+    })
+
+    return report
+  },
+
+  getReportById: (sessionId: string) => {
+    const { currentReport, pastReports } = get()
+    if (currentReport && currentReport.sessionId === sessionId) return currentReport
+    const found = pastReports.find((r) => r.sessionId === sessionId)
+    if (found) return found
+
+    try {
+      const item = localStorage.getItem(`lockedin_report_${sessionId}`)
+      if (item) return JSON.parse(item)
+    } catch {
+      // ignore
+    }
+    return undefined
   },
 
   setQuestionIndex: (index: number) => {
@@ -305,34 +437,9 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
 
     addTranscript('candidate', answerPayload?.speechText || 'I have submitted my solution and explanation for review.')
 
-    // Simulate AI synthesis & evaluation
+    // Run dynamic evaluation engine
     setTimeout(() => {
-      const isSystemDesign = currentQ.roundType === 'system-design'
-      const feedback: AnswerFeedback = {
-        questionId: currentQ.id,
-        overallScore: isSystemDesign ? 88 : 94,
-        technicalScore: isSystemDesign ? 90 : 96,
-        communicationScore: 85,
-        problemSolvingScore: 92,
-        codeQualityScore: isSystemDesign ? 82 : 95,
-        strengths: [
-          'Strong command of fundamental scalability trade-offs and atomic operations.',
-          'Clear architectural reasoning with consideration for network partition fallbacks.',
-          'Concise variable naming and structured modular pseudo-code.',
-        ],
-        weaknesses: [
-          'Could elaborate deeper on client-side jitter/backoff during rate-limit rejections.',
-          'Memory cost estimation per 100k active users was slightly understated.',
-        ],
-        suggestions: [
-          'Consider mentioning Sliding Window Counter as a hybrid compromise between memory and accuracy.',
-          'Highlight circuit breaker patterns in the API gateway for resilience when Redis latency spikes.',
-        ],
-        modelAnswerSummary:
-          'A production-grade distributed rate limiter typically employs a Redis cluster executing atomic Lua scripts implementing the Token Bucket algorithm with local memory caching for hot tier routing.',
-        evaluatedAt: new Date().toISOString(),
-        status: 'completed',
-      }
+      const feedback = evaluateCandidateSubmission(currentQ, candidateAnswer)
 
       set((state) => ({
         sessionStatus: 'in-progress',
@@ -342,9 +449,11 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
 
       addTranscript(
         'ai',
-        `Great job! I evaluated your answer for "${currentQ.title}". Your technical depth is solid with an overall score of ${feedback.overallScore}/100. Open the feedback drawer to see specific actionable points.`
+        feedback.overallScore > 0
+          ? `I evaluated your solution for "${currentQ.title}". Overall score: ${feedback.overallScore}/100. ${feedback.strengths[0] || ''}`
+          : `I reviewed your submission for "${currentQ.title}". No complete implementation was detected in the editor. Please write your code or verbal walk-through to receive full credit.`
       )
-    }, 1600)
+    }, 1200)
   },
 
   setFeedback: (questionId: string, feedback: AnswerFeedback) => {

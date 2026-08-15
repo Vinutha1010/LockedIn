@@ -1,4 +1,5 @@
 import { useState, type FC } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Editor from '@monaco-editor/react'
 import {
   Mic,
@@ -9,6 +10,7 @@ import {
   ChevronRight,
   Sparkles,
   CheckCircle,
+  CheckCircle2,
   HelpCircle,
   MessageSquare,
   Code2,
@@ -18,6 +20,10 @@ import {
   Send,
   PanelRightOpen,
   PanelRightClose,
+  Flag,
+  BarChart3,
+  AlertTriangle,
+  X,
 } from 'lucide-react'
 import { useInterviewStore } from '@/store/useInterviewStore'
 import { Timer } from '@/components/interview/Timer'
@@ -25,6 +31,7 @@ import { FeedbackPanel } from '@/components/interview/FeedbackPanel'
 import { cn } from '@/lib/utils'
 
 export const InterviewRoom: FC = () => {
+  const navigate = useNavigate()
   const {
     candidateName,
     targetRole,
@@ -52,6 +59,7 @@ export const InterviewRoom: FC = () => {
     addTranscript,
     setIsAiSpeaking,
     setIsListening,
+    completeAndGenerateReport,
   } = useInterviewStore()
 
   const [activeTab, setActiveTab] = useState<'editor' | 'notes'>('editor')
@@ -59,6 +67,7 @@ export const InterviewRoom: FC = () => {
   const [isSimulatingVoice, setIsSimulatingVoice] = useState(false)
   const [showHints, setShowHints] = useState(false)
   const [activeHintIndex, setActiveHintIndex] = useState(0)
+  const [showEndModal, setShowEndModal] = useState(false)
 
   const currentQ = questions[currentQuestionIndex]
   const currentFeedback = currentQ ? feedbacks[currentQ.id] : undefined
@@ -186,6 +195,15 @@ export const InterviewRoom: FC = () => {
             {currentFeedback && (
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             )}
+          </button>
+
+          <button
+            onClick={() => setShowEndModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-500/30 text-red-300 text-xs font-semibold transition-all hover:shadow-[0_0_12px_rgba(239,68,68,0.2)]"
+            title="Finish Interview & View Report"
+          >
+            <Flag className="w-3.5 h-3.5 text-red-400" />
+            <span className="hidden sm:inline">Finish Loop</span>
           </button>
 
           <button
@@ -592,6 +610,14 @@ export const InterviewRoom: FC = () => {
               </button>
 
               <button
+                onClick={() => setShowEndModal(true)}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-750 border border-slate-700 text-xs font-medium text-slate-300 hover:text-white transition-all"
+              >
+                <BarChart3 className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Finish & View Report</span>
+              </button>
+
+              <button
                 onClick={handleSubmit}
                 disabled={isEvaluating}
                 className={cn(
@@ -624,6 +650,90 @@ export const InterviewRoom: FC = () => {
           </div>
         )}
       </div>
+
+      {/* 3. FINISH INTERVIEW CONFIRMATION MODAL */}
+      {showEndModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">
+            <button
+              onClick={() => setShowEndModal(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <BarChart3 className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Complete Mock Interview?</h3>
+                <p className="text-xs text-slate-400">Generate executive score & hiring report</p>
+              </div>
+            </div>
+
+            <div className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800/80 mb-5 space-y-2.5">
+              <div className="flex justify-between text-xs text-slate-300">
+                <span>Questions Answered:</span>
+                <span className="font-semibold text-cyan-400">
+                  {Object.keys(feedbacks).length} / {questions.length}
+                </span>
+              </div>
+              <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-cyan-500 to-indigo-500 h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: `${Math.max(5, (Object.keys(feedbacks).length / questions.length) * 100)}%`,
+                  }}
+                />
+              </div>
+
+              <div className="space-y-1.5 pt-1">
+                {questions.map((q, idx) => {
+                  const answered = Boolean(feedbacks[q.id])
+                  return (
+                    <div key={q.id} className="flex items-center justify-between text-[11px] text-slate-400">
+                      <span className="truncate max-w-[240px]">Q{idx + 1}: {q.title}</span>
+                      {answered ? (
+                        <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                          <CheckCircle2 className="w-3 h-3" /> Submitted
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-amber-400/80">
+                          <AlertTriangle className="w-3 h-3" /> Pending
+                        </span>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+              Ending the session will synthesize all your code, STAR speech responses, and rubric scores into a comprehensive multi-dimensional report with PDF download.
+            </p>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowEndModal(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors"
+              >
+                Continue Practicing
+              </button>
+              <button
+                onClick={() => {
+                  setShowEndModal(false)
+                  const report = completeAndGenerateReport()
+                  navigate(`/report/${report.sessionId}`)
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-indigo-700 hover:from-cyan-400 hover:to-indigo-600 text-white font-semibold text-xs transition-all shadow-[0_0_20px_rgba(99,102,241,0.4)]"
+              >
+                Generate Report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

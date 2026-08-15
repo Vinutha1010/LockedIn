@@ -1,8 +1,11 @@
 export type RoundType =
-  | 'technical'
-  | 'behavioral'
-  | 'system-design'
+  | 'dsa'
+  | 'cs-fundamentals'
   | 'coding'
+  | 'aptitude'
+  | 'technical'
+  | 'system-design'
+  | 'behavioral'
   | 'resume-deep-dive'
 
 export type Difficulty = 'junior' | 'mid' | 'senior' | 'lead' | 'easy' | 'medium' | 'hard'
@@ -16,6 +19,10 @@ export interface Question {
   roundType: RoundType
   difficulty: Difficulty
   category: string
+  tags?: string[]
+  companyTags?: string[]
+  frequency?: 'High' | 'Medium' | 'Trending'
+  acceptanceRate?: string
   hints?: string[]
   starterCode?: string
   language?: string
@@ -57,6 +64,54 @@ export interface CandidateAnswer {
   submittedAt: string
 }
 
+export type HiringDecision = 'strong-hire' | 'hire' | 'lean-hire' | 'needs-work'
+
+export interface PerformanceDimension {
+  dimension: string
+  score: number // 0-100
+  benchmark: number // 0-100
+  fullMark: number
+}
+
+export interface QuestionReportSummary {
+  question: Question
+  answer?: CandidateAnswer
+  feedback?: AnswerFeedback
+}
+
+export interface SessionReport {
+  sessionId: string
+  candidateName: string
+  targetRole: string
+  companyTarget?: string
+  roundType: RoundType
+  difficulty: Difficulty
+  completedAt: string
+  timeSpentSeconds: number
+  totalTimeAllocatedSeconds: number
+
+  // Executive Evaluation
+  overallScore: number
+  hiringDecision: HiringDecision
+  percentileRank: number
+  summaryHeadline: string
+  summaryNotes: string
+
+  // Dimensional metrics
+  dimensions: PerformanceDimension[]
+
+  // Question-by-question review
+  questionSummaries: QuestionReportSummary[]
+
+  // Aggregated Highlights
+  topStrengths: string[]
+  keyGrowthAreas: string[]
+  recommendedNextSteps: string[]
+
+  // Transcripts
+  transcripts: TranscriptItem[]
+}
+
 export interface InterviewSessionState {
   sessionId: string
   candidateName: string
@@ -90,12 +145,19 @@ export interface InterviewSessionState {
   isFeedbackPanelOpen: boolean
   activeTab: 'workspace' | 'transcript' | 'feedback'
 
+  // Reports & History
+  currentReport: SessionReport | null
+  pastReports: SessionReport[]
+
   // Actions
   initSession: (params?: Partial<InterviewSessionState>) => void
   startSession: () => void
   pauseSession: () => void
   resumeSession: () => void
   endSession: () => void
+  completeAndGenerateReport: () => SessionReport
+  getReportById: (sessionId: string) => SessionReport | undefined
+  launchQuestionSession: (questionOrQuestions: Question | Question[]) => void
   
   setQuestionIndex: (index: number) => void
   nextQuestion: () => void

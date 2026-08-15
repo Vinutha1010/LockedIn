@@ -1,5 +1,5 @@
 import { useState, type FC, type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import {
   Flame,
   Sparkles,
@@ -12,20 +12,22 @@ import {
   ShieldCheck,
   Zap,
   Clock,
-  Award,
+  BookOpen,
+  BarChart3,
 } from 'lucide-react'
 import { useInterviewStore } from '@/store/useInterviewStore'
-import type { RoundType, Difficulty } from '@/types'
+import type { RoundType } from '@/types'
 import { cn } from '@/lib/utils'
+
+import { QUESTION_BANK } from '@/data/questions'
 
 export const Dashboard: FC = () => {
   const navigate = useNavigate()
   const { initSession, startSession } = useInterviewStore()
 
   const [candidateName, setCandidateName] = useState('Alex Chen')
-  const [targetRole, setTargetRole] = useState('Senior Fullstack Engineer')
-  const [selectedRound, setSelectedRound] = useState<RoundType>('system-design')
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('senior')
+  const [targetRole, setTargetRole] = useState('Software Engineer (SDE)')
+  const [selectedRound, setSelectedRound] = useState<RoundType>('dsa')
 
   const tracks: Array<{
     id: RoundType
@@ -36,55 +38,52 @@ export const Dashboard: FC = () => {
     color: string
   }> = [
     {
-      id: 'system-design',
-      title: 'Distributed System Design',
-      icon: <Cpu className="w-5 h-5" />,
-      description: 'Microservices, caching, sharding, consensus, rate limiters & scaling.',
-      tag: 'FAANG Favorite',
+      id: 'dsa',
+      title: 'Data Structures & Algorithms',
+      icon: <Code className="w-5 h-5" />,
+      description: 'Arrays, HashMaps, Linked Lists, Stacks, Binary Trees & Kadane algorithms.',
+      tag: 'Core DSA',
       color: 'from-cyan-500/20 to-indigo-500/10 border-cyan-500/40 text-cyan-400',
     },
     {
-      id: 'coding',
-      title: 'Data Structures & Algorithms',
-      icon: <Code className="w-5 h-5" />,
-      description: 'Dynamic programming, graphs, trees, two pointers with Monaco IDE.',
-      tag: 'Live Execution',
+      id: 'cs-fundamentals',
+      title: 'CS Fundamentals (OS, DBMS, Networks, OOPs)',
+      icon: <Cpu className="w-5 h-5" />,
+      description: 'Processes vs Threads, ACID & B+ Trees, TCP 3-way handshake, and 4 OOP pillars.',
+      tag: 'Essential Core',
       color: 'from-indigo-500/20 to-purple-500/10 border-indigo-500/40 text-indigo-400',
     },
     {
-      id: 'behavioral',
-      title: 'STAR Behavioral & Leadership',
-      icon: <Users className="w-5 h-5" />,
-      description: 'Conflict resolution, leadership principles, system trade-off defense.',
-      tag: 'Voice & AI Scoring',
-      color: 'from-amber-500/20 to-orange-500/10 border-amber-500/40 text-amber-400',
-    },
-    {
-      id: 'technical',
-      title: 'Full Technical Loop',
+      id: 'coding',
+      title: 'Practical Coding & Problem Solving',
       icon: <Layers className="w-5 h-5" />,
-      description: 'Comprehensive 45-minute multi-part interview simulating principal loop.',
-      tag: 'Full Simulation',
+      description: 'Sliding window, string manipulation, intervals, and clean code implementation.',
+      tag: 'Hands-on Coding',
       color: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/40 text-emerald-400',
     },
-  ]
-
-  const difficulties: Array<{ id: Difficulty; label: string; exp: string }> = [
-    { id: 'junior', label: 'Junior / Entry', exp: '0-2 Yrs' },
-    { id: 'mid', label: 'Mid-Level', exp: '2-5 Yrs' },
-    { id: 'senior', label: 'Senior', exp: '5-8 Yrs' },
-    { id: 'lead', label: 'Staff / Principal', exp: '8+ Yrs' },
+    {
+      id: 'aptitude',
+      title: 'Quantitative & Logical Aptitude',
+      icon: <Users className="w-5 h-5" />,
+      description: 'Time & Work, Probability, Clock angles, Speed-Distance, and Brainteasers.',
+      tag: 'Screening Round',
+      color: 'from-amber-500/20 to-orange-500/10 border-amber-500/40 text-amber-400',
+    },
   ]
 
   const handleLaunchSession = () => {
+    const trackQuestions = QUESTION_BANK.filter((q) => q.roundType === selectedRound)
+    const questionsToUse = trackQuestions.length > 0 ? trackQuestions : QUESTION_BANK.slice(0, 3)
+
     initSession({
       candidateName,
       targetRole,
       roundType: selectedRound,
-      difficulty: selectedDifficulty,
+      difficulty: 'medium',
+      questions: questionsToUse,
       sessionStatus: 'in-progress',
       isTimerRunning: true,
-      timeRemainingSeconds: 2700,
+      timeRemainingSeconds: questionsToUse.length * 15 * 60,
     })
     startSession()
     navigate('/interview')
@@ -116,7 +115,23 @@ export const Dashboard: FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300">
+          <Link
+            to="/questions"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-750 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-all shadow-sm"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Question Bank</span>
+          </Link>
+
+          <Link
+            to="/report"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors"
+          >
+            <BarChart3 className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Reports</span>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>AI Calibration Active</span>
           </div>
@@ -140,6 +155,18 @@ export const Dashboard: FC = () => {
             Real-time simulated AI interviewer with dynamic follow-ups, Monaco code editor, voice
             synthesis, and dimensional rubric scoring.
           </p>
+
+          {/* Quick link to Question Bank */}
+          <div className="pt-2">
+            <Link
+              to="/questions"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-700/80 text-xs font-semibold text-slate-300 hover:text-cyan-300 transition-all shadow-md group"
+            >
+              <BookOpen className="w-4 h-4 text-cyan-400" />
+              <span>Browse 16+ Curated Problems in Practice Hub</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </div>
         </div>
 
         {/* Configuration Matrix */}
@@ -181,31 +208,6 @@ export const Dashboard: FC = () => {
                   <p className="text-xs text-slate-400 leading-relaxed">{track.description}</p>
                 </div>
               ))}
-            </div>
-
-            {/* Seniority / Difficulty */}
-            <div className="space-y-3 pt-2">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Award className="w-4 h-4 text-amber-400" />
-                <span>2. Seniority Level</span>
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {difficulties.map((diff) => (
-                  <button
-                    key={diff.id}
-                    onClick={() => setSelectedDifficulty(diff.id)}
-                    className={cn(
-                      'p-3 rounded-xl border text-left transition-all',
-                      selectedDifficulty === diff.id
-                        ? 'border-cyan-500 bg-cyan-950/30 text-white shadow-[0_0_15px_-3px_rgba(6,182,212,0.3)]'
-                        : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-slate-200 hover:bg-slate-850'
-                    )}
-                  >
-                    <div className="text-xs font-bold text-slate-200">{diff.label}</div>
-                    <div className="text-[10px] text-slate-500 font-mono mt-0.5">{diff.exp}</div>
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
 

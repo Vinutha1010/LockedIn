@@ -120,8 +120,8 @@ npm run build
 ## 🛣️ Roadmap
 
 - [x] **Phase 1**: Frontend Core, Dark Slate Design System, Monaco Editor, Zustand Store, AI Feedback Drawer, and Interview Room.
-- [ ] **Phase 2**: Post-Interview Comprehensive Report page (`/report/:id`) with PDF export.
-- [ ] **Phase 3**: Question Bank & Practice Library (`/questions`).
+- [x] **Phase 2**: Post-Interview Comprehensive Report page (`/report/:id`) with PDF export & hiring recommendation badges.
+- [x] **Phase 3**: Question Bank & Practice Library (`/questions`) with multi-track search, problem drawer & custom playlists.
 - [ ] **Phase 4**: Web Speech API integration (real voice-to-text and AI voice reading prompts).
 - [ ] **Phase 5**: Backend API (Node.js, Express, PostgreSQL, Prisma, Gemini/Claude AI integration, Judge0 code execution).
 
