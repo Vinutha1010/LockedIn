@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react'
+import { useState, useEffect, useRef, type FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Editor from '@monaco-editor/react'
 import {
@@ -16,6 +16,7 @@ import {
   Code2,
   FileText,
   Volume2,
+  VolumeX,
   Flame,
   Send,
   PanelRightOpen,
@@ -24,10 +25,25 @@ import {
   BarChart3,
   AlertTriangle,
   X,
+  Settings2,
+  Square,
+  Play,
 } from 'lucide-react'
 import { useInterviewStore } from '@/store/useInterviewStore'
 import { Timer } from '@/components/interview/Timer'
 import { FeedbackPanel } from '@/components/interview/FeedbackPanel'
+import { AudioVisualizer } from '@/components/interview/AudioVisualizer'
+import { SpeechControls } from '@/components/interview/SpeechControls'
+import { VoiceSettingsModal } from '@/components/interview/VoiceSettingsModal'
+import { CodeRunnerPanel } from '@/components/interview/CodeRunnerPanel'
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
+import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
+import { useCameraStream } from '@/hooks/useCameraStream'
+import { useAudioVisualizer } from '@/hooks/useAudioVisualizer'
+import { executeCodeAgainstTestCases } from '@/lib/codeRunner'
+import { getStarterCodeForLanguage } from '@/lib/templates'
+import { soundEffects } from '@/lib/soundEffects'
+import type { TestExecutionResult } from '@/types'
 import { cn } from '@/lib/utils'
 
 export const InterviewRoom: FC = () => {
@@ -44,14 +60,20 @@ export const InterviewRoom: FC = () => {
     feedbacks,
     isFeedbackPanelOpen,
     isAiSpeaking,
-    isListening,
     candidateAudioEnabled,
     candidateVideoEnabled,
+    candidateNotes,
+    speechRate = 1.0,
+    autoSpeakQuestions = false,
+    soundEffectsEnabled = true,
+    selectedVoiceURI: storeSelectedVoiceURI,
     nextQuestion,
     prevQuestion,
     setQuestionIndex,
     setActiveCode,
     setActiveLanguage,
+    setCandidateNotes,
+    setVoiceSettings,
     toggleAudio,
     toggleVideo,
     submitAnswer,
@@ -63,17 +85,209 @@ export const InterviewRoom: FC = () => {
   } = useInterviewStore()
 
   const [activeTab, setActiveTab] = useState<'editor' | 'notes'>('editor')
-  const [candidateSpeechDraft, setCandidateSpeechDraft] = useState('')
+  const [candidateSpeechDraft, setCandidateSpeechDraft] = useState(candidateNotes || '')
   const [isSimulatingVoice, setIsSimulatingVoice] = useState(false)
   const [showHints, setShowHints] = useState(false)
   const [activeHintIndex, setActiveHintIndex] = useState(0)
   const [showEndModal, setShowEndModal] = useState(false)
+  const [showVoiceSettings, setShowVoiceSettings] = useState(false)
+  const [isTestingVoice, setIsTestingVoice] = useState(false)
+
+  // 5. Code runner state
+  const [isRunningCode, setIsRunningCode] = useState(false)
+  const [testResults, setTestResults] = useState<TestExecutionResult[]>([])
+  const [runnerLogs, setRunnerLogs] = useState<string[]>([])
+  const [runnerExecutionTime, setRunnerExecutionTime] = useState<number | undefined>(undefined)
+  const [runnerCompileError, setRunnerCompileError] = useState<string | undefined>(undefined)
+  const [isRunnerPanelExpanded, setIsRunnerPanelExpanded] = useState(true)
+
+  // Reset runner output on question change
+  useEffect(() => {
+    setTestResults([])
+    setRunnerLogs([])
+    setRunnerCompileError(undefined)
+    setRunnerExecutionTime(undefined)
+  }, [currentQuestionIndex])
 
   const currentQ = questions[currentQuestionIndex]
   const currentFeedback = currentQ ? feedbacks[currentQ.id] : undefined
   const isEvaluating = sessionStatus === 'evaluating'
 
-  // Voice simulation handler
+  // 1. Web Speech Synthesis (AI Interviewer Voice)
+  const {
+    isSpeaking: isSynthSpeaking,
+    voices,
+    selectedVoiceURI,
+    setSelectedVoiceURI,
+    speak: speakText,
+    stop: stopSpeaking,
+  } = useSpeechSynthesis({
+    rate: speechRate,
+    onStart: () => setIsAiSpeaking(true),
+    onEnd: () => setIsAiSpeaking(false),
+  })
+
+  // Sync selected voice from store
+  useEffect(() => {
+    if (storeSelectedVoiceURI && storeSelectedVoiceURI !== selectedVoiceURI) {
+      setSelectedVoiceURI(storeSelectedVoiceURI)
+    }
+  }, [storeSelectedVoiceURI, selectedVoiceURI, setSelectedVoiceURI])
+
+  // 2. Camera Stream Hook
+  const {
+    videoRef,
+    startStream: startCamera,
+    stopStream: stopCamera,
+  } = useCameraStream(false)
+
+  // Handle Camera toggling
+  useEffect(() => {
+    if (candidateVideoEnabled) {
+      startCamera()
+    } else {
+      stopCamera()
+    }
+  }, [candidateVideoEnabled, startCamera, stopCamera])
+
+  // 3. Audio Frequency Visualizer Hook
+  const {
+    frequencyData: micFrequencyData,
+    startVisualizer,
+    stopVisualizer,
+  } = useAudioVisualizer({ barsCount: 7 })
+
+  // 4. Speech Recognition (Candidate Voice-to-Text)
+  const {
+    isSupported: isSpeechRecognitionSupported,
+    isListening: isRecListening,
+    interimTranscript,
+    error: speechRecError,
+    startListening: startSpeechRec,
+    stopListening: stopSpeechRec,
+    resetTranscript: resetSpeechRec,
+  } = useSpeechRecognition({
+    onTranscriptUpdate: (newText, isFinal) => {
+      if (isFinal && newText) {
+        setCandidateSpeechDraft((prev) => {
+          const updated = prev ? `${prev.trim()}\n${newText.trim()}` : newText.trim()
+          setCandidateNotes(updated)
+          return updated
+        })
+      }
+    },
+  })
+
+  // Sync listening state with store & visualizer
+  useEffect(() => {
+    setIsListening(isRecListening)
+    if (isRecListening && candidateAudioEnabled) {
+      startVisualizer()
+    } else if (!isRecListening) {
+      stopVisualizer()
+    }
+  }, [isRecListening, candidateAudioEnabled, setIsListening, startVisualizer, stopVisualizer])
+
+  // Auto-speak question prompt when advancing stages if enabled
+  const prevQuestionIndexRef = useRef(currentQuestionIndex)
+  useEffect(() => {
+    if (
+      autoSpeakQuestions &&
+      currentQ &&
+      prevQuestionIndexRef.current !== currentQuestionIndex
+    ) {
+      prevQuestionIndexRef.current = currentQuestionIndex
+      const promptToRead = `Question ${currentQuestionIndex + 1}: ${currentQ.title}. ${currentQ.description.slice(0, 300)}`
+      speakText(promptToRead)
+    } else {
+      prevQuestionIndexRef.current = currentQuestionIndex
+    }
+  }, [currentQuestionIndex, autoSpeakQuestions, currentQ, speakText])
+
+  // Execute code against test cases
+  const handleRunCode = async () => {
+    if (!currentQ) return
+    setIsRunningCode(true)
+    setIsRunnerPanelExpanded(true)
+    setRunnerCompileError(undefined)
+
+    try {
+      const execution = await executeCodeAgainstTestCases(
+        activeCode,
+        currentQ.functionName || 'twoSum',
+        currentQ.testCases || [],
+        activeLanguage
+      )
+
+      setTestResults(execution.results)
+      setRunnerLogs(execution.logs)
+      setRunnerExecutionTime(execution.totalExecutionTimeMs)
+      setRunnerCompileError(execution.compileError)
+
+      if (execution.allPassed && soundEffectsEnabled) {
+        soundEffects.playSuccessSubmission()
+      }
+    } catch (err: any) {
+      setRunnerCompileError(err.message || 'Execution error')
+    } finally {
+      setIsRunningCode(false)
+    }
+  }
+
+  // Keyboard shortcut Ctrl+Enter / Cmd+Enter to Run Code
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault()
+        handleRunCode()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeCode, currentQ, soundEffectsEnabled])
+
+  // Clean up speech on unmount
+  useEffect(() => {
+    return () => {
+      stopSpeaking()
+      stopSpeechRec()
+      stopCamera()
+      stopVisualizer()
+    }
+  }, [stopSpeaking, stopSpeechRec, stopCamera, stopVisualizer])
+
+  // Read current question prompt aloud
+  const handleReadPrompt = () => {
+    if (isSynthSpeaking) {
+      stopSpeaking()
+      return
+    }
+    if (!currentQ) return
+    const textToSpeak = `${currentQ.title}. ${currentQ.description}`
+    speakText(textToSpeak)
+  }
+
+  // Read current hint aloud
+  const handleReadHint = (hintText: string) => {
+    if (isSynthSpeaking) {
+      stopSpeaking()
+      return
+    }
+    speakText(`Here is a hint: ${hintText}`)
+  }
+
+  // Test Voice Sample
+  const handleTestVoice = () => {
+    setIsTestingVoice(true)
+    speakText(
+      "Hello! I'm Sarah, your AI interviewer. I'm excited to evaluate your technical and behavioral skills today.",
+      {
+        onEnd: () => setIsTestingVoice(false),
+      }
+    )
+  }
+
+  // Voice simulation handler (fallback)
   const handleSimulateSpeech = () => {
     if (isSimulatingVoice) return
     setIsSimulatingVoice(true)
@@ -89,7 +303,11 @@ export const InterviewRoom: FC = () => {
     const interval = setInterval(() => {
       if (currentIdx < simulatedPhrases.length) {
         const phrase = simulatedPhrases[currentIdx]
-        setCandidateSpeechDraft((prev) => (prev ? `${prev}\n${phrase}` : phrase))
+        setCandidateSpeechDraft((prev) => {
+          const updated = prev ? `${prev}\n${phrase}` : phrase
+          setCandidateNotes(updated)
+          return updated
+        })
         currentIdx++
       } else {
         clearInterval(interval)
@@ -99,19 +317,28 @@ export const InterviewRoom: FC = () => {
     }, 1200)
   }
 
-  const handleInterviewerSpeak = () => {
-    setIsAiSpeaking(true)
-    setTimeout(() => {
-      setIsAiSpeaking(false)
-    }, 3500)
-  }
-
   const handleSubmit = async () => {
+    stopSpeaking()
+    if (isRecListening) {
+      stopSpeechRec()
+    }
     await submitAnswer({
       code: activeCode,
       language: activeLanguage,
       speechText: candidateSpeechDraft || 'Candidate presented architecture walk-through.',
     })
+  }
+
+  const handleAppendToEditor = () => {
+    if (!candidateSpeechDraft) return
+    const commentPrefix =
+      activeLanguage === 'python' ? '# ' : activeLanguage === 'sql' ? '-- ' : '// '
+    const formattedComment = candidateSpeechDraft
+      .split('\n')
+      .map((line) => `${commentPrefix}${line}`)
+      .join('\n')
+
+    setActiveCode(`${activeCode}\n\n/* Architecture & Verbal Explanation */\n${formattedComment}`)
   }
 
   const languages = [
@@ -129,8 +356,11 @@ export const InterviewRoom: FC = () => {
       <header className="h-14 px-5 border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-xl flex items-center justify-between shrink-0 z-20">
         {/* Left: Brand & Round Meta */}
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-[0_0_15px_-3px_rgba(99,102,241,0.5)]">
+          <div
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-[0_0_15px_-3px_rgba(99,102,241,0.5)] group-hover:scale-105 transition-transform">
               <Flame className="w-4 h-4 text-white" />
             </div>
             <span className="font-extrabold text-base tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
@@ -179,8 +409,17 @@ export const InterviewRoom: FC = () => {
           <Timer />
         </div>
 
-        {/* Right: AI Insights Toggle & Controls */}
+        {/* Right: Audio Settings, AI Insights Toggle & Finish */}
         <div className="flex items-center gap-2.5">
+          {/* Voice Settings Button */}
+          <button
+            onClick={() => setShowVoiceSettings(true)}
+            className="p-2 rounded-lg bg-slate-850/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60 transition-colors"
+            title="Audio & AI Voice Settings"
+          >
+            <Settings2 className="w-4 h-4 text-cyan-400" />
+          </button>
+
           <button
             onClick={() => toggleFeedbackPanel()}
             className={cn(
@@ -241,40 +480,33 @@ export const InterviewRoom: FC = () => {
                 )}
               </div>
 
-              {/* AI Avatar Graphic with Audio Wave */}
+              {/* AI Avatar Graphic with Synchronized Audio Wave */}
               <div className="flex flex-col items-center justify-center my-auto">
                 <div
-                  onClick={handleInterviewerSpeak}
+                  onClick={handleReadPrompt}
                   className={cn(
-                    'w-12 h-12 rounded-full flex items-center justify-center transition-all cursor-pointer',
+                    'w-12 h-12 rounded-full flex items-center justify-center transition-all cursor-pointer group',
                     isAiSpeaking
                       ? 'bg-indigo-600/30 border-2 border-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.5)] scale-105'
-                      : 'bg-slate-800/90 border border-slate-700 hover:border-slate-500'
+                      : 'bg-slate-800/90 border border-slate-700 hover:border-indigo-400 hover:bg-slate-800'
                   )}
+                  title={isAiSpeaking ? 'Click to Stop Speaking' : 'Click to Read Question Aloud'}
                 >
-                  <Volume2
-                    className={cn(
-                      'w-6 h-6',
-                      isAiSpeaking ? 'text-indigo-300 animate-pulse' : 'text-slate-400'
-                    )}
-                  />
+                  {isAiSpeaking ? (
+                    <Square className="w-5 h-5 text-indigo-300 fill-indigo-300 animate-pulse" />
+                  ) : (
+                    <Volume2 className="w-5 h-5 text-slate-400 group-hover:text-cyan-300 transition-colors" />
+                  )}
                 </div>
 
                 {/* Animated Wave Bars */}
-                {isAiSpeaking && (
-                  <div className="flex items-center gap-1 mt-2 h-4">
-                    {[40, 75, 100, 60, 85, 30, 90].map((h, i) => (
-                      <span
-                        key={i}
-                        className="w-1 bg-cyan-400 rounded-full animate-wave-bar"
-                        style={{
-                          height: `${h}%`,
-                          animationDelay: `${i * 0.15}s`,
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
+                <div className="mt-2 h-4 flex items-center justify-center">
+                  <AudioVisualizer
+                    isActive={isAiSpeaking}
+                    colorScheme="indigo"
+                    heightClass="h-4"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center justify-between text-[10px] text-slate-400 z-10">
@@ -285,46 +517,67 @@ export const InterviewRoom: FC = () => {
               </div>
             </div>
 
-            {/* Candidate Webcam Tile */}
+            {/* Candidate Webcam / Audio Tile */}
             <div className="relative aspect-video rounded-xl overflow-hidden border border-slate-800 bg-slate-900/90 flex flex-col justify-between p-2.5 shadow-inner">
               <div className="flex items-center justify-between z-10">
                 <span className="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/50 text-[10px] font-semibold text-slate-300">
                   {candidateName}
                 </span>
-                {isListening && (
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/30 text-[9px] text-emerald-400 font-mono">
-                    MIC LIVE
+                {(isRecListening || isSimulatingVoice) && (
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/30 text-[9px] text-emerald-400 font-mono flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    LIVE
                   </span>
                 )}
               </div>
 
-              {/* Video placeholder or fallback */}
-              <div className="flex items-center justify-center my-auto">
+              {/* Video Element OR Fallback Initial Avatar */}
+              <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
                 {candidateVideoEnabled ? (
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-slate-700 to-slate-800 border border-slate-600 flex items-center justify-center text-slate-300 font-bold text-sm shadow-md">
-                    {candidateName
-                      .split(' ')
-                      .map((n) => n[0])
-                      .join('')}
-                  </div>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
-                  <div className="text-center text-slate-500">
-                    <VideoOff className="w-6 h-6 mx-auto mb-1" />
+                  <div className="text-center text-slate-500 my-auto">
+                    <VideoOff className="w-6 h-6 mx-auto mb-1 text-slate-600" />
                     <span className="text-[10px]">Camera Off</span>
                   </div>
                 )}
               </div>
 
+              {/* Wave visualizer overlay when mic active */}
+              {(isRecListening || isSimulatingVoice) && (
+                <div className="absolute inset-x-0 bottom-8 flex justify-center z-10 pointer-events-none">
+                  <div className="px-2 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-emerald-500/30">
+                    <AudioVisualizer
+                      isActive={true}
+                      frequencies={micFrequencyData}
+                      colorScheme="emerald"
+                      heightClass="h-3"
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Media Controls */}
-              <div className="flex items-center justify-between z-10">
+              <div className="flex items-center justify-between z-10 mt-auto pt-1">
                 <div className="flex items-center gap-1.5">
                   <button
-                    onClick={toggleAudio}
+                    onClick={() => {
+                      toggleAudio()
+                      if (isRecListening) {
+                        stopSpeechRec()
+                      }
+                    }}
                     className={cn(
-                      'p-1 rounded-md transition-colors',
+                      'p-1 rounded-md transition-colors backdrop-blur-sm',
                       candidateAudioEnabled
-                        ? 'text-slate-300 hover:bg-slate-800'
-                        : 'text-rose-400 bg-rose-950/40 border border-rose-500/30'
+                        ? 'text-slate-300 hover:bg-slate-800 bg-slate-900/60'
+                        : 'text-rose-400 bg-rose-950/70 border border-rose-500/30'
                     )}
                     title={candidateAudioEnabled ? 'Mute Mic' : 'Unmute Mic'}
                   >
@@ -338,10 +591,10 @@ export const InterviewRoom: FC = () => {
                   <button
                     onClick={toggleVideo}
                     className={cn(
-                      'p-1 rounded-md transition-colors',
+                      'p-1 rounded-md transition-colors backdrop-blur-sm',
                       candidateVideoEnabled
-                        ? 'text-slate-300 hover:bg-slate-800'
-                        : 'text-rose-400 bg-rose-950/40 border border-rose-500/30'
+                        ? 'text-slate-300 hover:bg-slate-800 bg-slate-900/60'
+                        : 'text-rose-400 bg-rose-950/70 border border-rose-500/30'
                     )}
                     title={candidateVideoEnabled ? 'Turn Off Video' : 'Turn On Video'}
                   >
@@ -354,11 +607,16 @@ export const InterviewRoom: FC = () => {
                 </div>
 
                 <button
-                  onClick={handleSimulateSpeech}
-                  disabled={isSimulatingVoice}
-                  className="px-2 py-0.5 rounded bg-cyan-950/70 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-900/60 text-[10px] font-medium transition-all"
+                  onClick={isRecListening ? stopSpeechRec : startSpeechRec}
+                  disabled={!candidateAudioEnabled}
+                  className={cn(
+                    'px-2 py-0.5 rounded text-[10px] font-semibold transition-all backdrop-blur-sm',
+                    isRecListening
+                      ? 'bg-rose-600 text-white animate-pulse border border-rose-400'
+                      : 'bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/80'
+                  )}
                 >
-                  {isSimulatingVoice ? 'Transcribing...' : 'Simulate Mic'}
+                  {isRecListening ? 'Recording' : 'Dictate'}
                 </button>
               </div>
             </div>
@@ -375,9 +633,22 @@ export const InterviewRoom: FC = () => {
                   {currentQ?.difficulty}
                 </span>
               </div>
-              <h2 className="text-lg font-bold text-white leading-snug tracking-tight">
-                {currentQ?.title}
-              </h2>
+              <div className="flex items-start justify-between gap-2">
+                <h2 className="text-lg font-bold text-white leading-snug tracking-tight">
+                  {currentQ?.title}
+                </h2>
+                <button
+                  onClick={handleReadPrompt}
+                  className="p-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-cyan-300 border border-slate-700/60 transition-colors shrink-0"
+                  title={isAiSpeaking ? 'Stop Reading' : 'Read Prompt Aloud'}
+                >
+                  {isAiSpeaking ? (
+                    <VolumeX className="w-4 h-4 text-rose-400" />
+                  ) : (
+                    <Volume2 className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Description */}
@@ -421,21 +692,31 @@ export const InterviewRoom: FC = () => {
 
                 {showHints && (
                   <div className="p-3.5 border-t border-slate-800 space-y-2.5 bg-slate-950/40 text-xs">
-                    <div className="flex gap-1 mb-2">
-                      {currentQ.hints.map((_, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setActiveHintIndex(i)}
-                          className={cn(
-                            'px-2 py-0.5 rounded text-[10px] font-mono transition-colors',
-                            activeHintIndex === i
-                              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                              : 'bg-slate-800 text-slate-400'
-                          )}
-                        >
-                          Hint {i + 1}
-                        </button>
-                      ))}
+                    <div className="flex items-center justify-between gap-1 mb-2">
+                      <div className="flex gap-1">
+                        {currentQ.hints.map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setActiveHintIndex(i)}
+                            className={cn(
+                              'px-2 py-0.5 rounded text-[10px] font-mono transition-colors',
+                              activeHintIndex === i
+                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                                : 'bg-slate-800 text-slate-400'
+                            )}
+                          >
+                            Hint {i + 1}
+                          </button>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() => handleReadHint(currentQ.hints![activeHintIndex])}
+                        className="p-1 rounded bg-slate-800 text-slate-300 hover:text-amber-300 transition-colors"
+                        title="Read Hint Aloud"
+                      >
+                        <Volume2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                     <p className="text-slate-300 leading-relaxed bg-amber-950/10 border border-amber-500/20 p-2.5 rounded-lg text-amber-200/90">
                       {currentQ.hints[activeHintIndex]}
@@ -447,16 +728,21 @@ export const InterviewRoom: FC = () => {
 
             {/* Live Transcript Snippet */}
             <div className="space-y-2 pt-2">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-                <MessageSquare className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Live Transcript</span>
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
+                <div className="flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Live Transcript</span>
+                </div>
+                <span className="text-[10px] text-slate-500">
+                  {transcripts.length} exchanges
+                </span>
               </div>
               <div className="max-h-36 overflow-y-auto space-y-2 text-xs pr-1">
                 {transcripts.map((t) => (
                   <div
                     key={t.id}
                     className={cn(
-                      'p-2.5 rounded-lg border text-xs leading-relaxed',
+                      'p-2.5 rounded-lg border text-xs leading-relaxed group relative',
                       t.speaker === 'ai'
                         ? 'bg-indigo-950/30 border-indigo-500/20 text-indigo-200'
                         : 'bg-slate-850 border-slate-700/60 text-slate-200'
@@ -466,7 +752,18 @@ export const InterviewRoom: FC = () => {
                       <span className="font-semibold capitalize text-slate-300">
                         {t.speaker === 'ai' ? 'Interviewer' : candidateName}
                       </span>
-                      <span>{t.timestamp}</span>
+                      <div className="flex items-center gap-2">
+                        <span>{t.timestamp}</span>
+                        {t.speaker === 'ai' && (
+                          <button
+                            onClick={() => speakText(t.text)}
+                            className="text-slate-400 hover:text-cyan-300 transition-colors"
+                            title="Replay Voice"
+                          >
+                            <Volume2 className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                     {t.text}
                   </div>
@@ -505,14 +802,48 @@ export const InterviewRoom: FC = () => {
               >
                 <FileText className="w-3.5 h-3.5 text-indigo-400" />
                 <span>Behavioral / STAR Notes</span>
+                {candidateSpeechDraft && (
+                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                )}
               </button>
             </div>
 
             {activeTab === 'editor' && (
               <div className="flex items-center gap-2">
+                <button
+                  onClick={handleRunCode}
+                  disabled={isRunningCode}
+                  className={cn(
+                    'px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm',
+                    isRunningCode
+                      ? 'bg-slate-800 text-slate-400 cursor-wait'
+                      : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20'
+                  )}
+                  title="Run code against test cases (Ctrl + Enter)"
+                >
+                  {isRunningCode ? (
+                    <>
+                      <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Running...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3 h-3 fill-white" />
+                      <span>Run Tests</span>
+                    </>
+                  )}
+                </button>
+
                 <select
                   value={activeLanguage}
-                  onChange={(e) => setActiveLanguage(e.target.value)}
+                  onChange={(e) => {
+                    const newLang = e.target.value
+                    setActiveLanguage(newLang)
+                    if (currentQ) {
+                      const template = getStarterCodeForLanguage(currentQ, newLang)
+                      setActiveCode(template)
+                    }
+                  }}
                   className="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-md px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-cyan-500"
                 >
                   {languages.map((l) => (
@@ -526,47 +857,88 @@ export const InterviewRoom: FC = () => {
           </div>
 
           {/* Active Workspace Viewport */}
-          <div className="flex-1 relative overflow-hidden bg-[#0d1117]">
+          <div className="flex-1 relative overflow-hidden bg-[#0d1117] flex flex-col">
             {activeTab === 'editor' ? (
-              <Editor
-                height="100%"
-                language={activeLanguage}
-                value={activeCode}
-                theme="vs-dark"
-                onChange={(value) => setActiveCode(value || '')}
-                options={{
-                  fontSize: 13,
-                  fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
-                  fontLigatures: true,
-                  minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  automaticLayout: true,
-                  padding: { top: 12, bottom: 12 },
-                  tabSize: 2,
-                  lineNumbers: 'on',
-                  cursorBlinking: 'smooth',
-                  smoothScrolling: true,
-                }}
-              />
+              <div className="flex-1 flex flex-col h-full overflow-hidden">
+                <div className="flex-1 relative overflow-hidden">
+                  <Editor
+                    height="100%"
+                    language={activeLanguage}
+                    value={activeCode}
+                    theme="vs-dark"
+                    onChange={(value) => setActiveCode(value || '')}
+                    options={{
+                      fontSize: 13,
+                      fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
+                      fontLigatures: true,
+                      minimap: { enabled: false },
+                      scrollBeyondLastLine: false,
+                      automaticLayout: true,
+                      padding: { top: 12, bottom: 12 },
+                      tabSize: 2,
+                      lineNumbers: 'on',
+                      cursorBlinking: 'smooth',
+                      smoothScrolling: true,
+                    }}
+                  />
+                </div>
+
+                {/* Bottom Test Cases & Console Runner Panel */}
+                <CodeRunnerPanel
+                  testCases={currentQ?.testCases}
+                  results={testResults}
+                  isRunning={isRunningCode}
+                  logs={runnerLogs}
+                  totalExecutionTimeMs={runnerExecutionTime}
+                  compileError={runnerCompileError}
+                  onRunCode={handleRunCode}
+                  isExpanded={isRunnerPanelExpanded}
+                  onToggleExpand={() => setIsRunnerPanelExpanded(!isRunnerPanelExpanded)}
+                />
+              </div>
             ) : (
-              <div className="h-full p-5 flex flex-col space-y-3 bg-slate-950/60 overflow-y-auto">
-                <div className="flex items-center justify-between">
+              <div className="h-full p-5 flex flex-col space-y-4 bg-slate-950/60 overflow-y-auto">
+                {/* Speech Dictation Toolbar */}
+                <SpeechControls
+                  isSupported={isSpeechRecognitionSupported}
+                  isListening={isRecListening}
+                  interimTranscript={interimTranscript}
+                  speechDraft={candidateSpeechDraft}
+                  onStartListening={startSpeechRec}
+                  onStopListening={stopSpeechRec}
+                  onClearDraft={() => {
+                    setCandidateSpeechDraft('')
+                    setCandidateNotes('')
+                    resetSpeechRec()
+                  }}
+                  onInsertToEditor={handleAppendToEditor}
+                  onSimulateSpeech={handleSimulateSpeech}
+                  isSimulatingVoice={isSimulatingVoice}
+                  visualizerFrequencies={micFrequencyData}
+                  errorMessage={speechRecError}
+                />
+
+                <div className="flex items-center justify-between pt-1">
                   <span className="text-xs font-semibold text-slate-300">
-                    STAR Response Framework Draft
+                    STAR Framework Response Notes
                   </span>
                   <span className="text-[11px] text-slate-400">
-                    Supports voice simulation & manual markdown
+                    Auto-transcribed & editable
                   </span>
                 </div>
+
                 <textarea
                   value={candidateSpeechDraft}
-                  onChange={(e) => setCandidateSpeechDraft(e.target.value)}
-                  placeholder="Record or draft your verbal explanation here:
-• Situation: Context of the architecture or challenge...
-• Task: Key objective & constraints...
-• Action: How you designed, coded, or solved it...
-• Result: Concrete outcome, metrics, and reflections..."
-                  className="flex-1 w-full p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono resize-none leading-relaxed"
+                  onChange={(e) => {
+                    setCandidateSpeechDraft(e.target.value)
+                    setCandidateNotes(e.target.value)
+                  }}
+                  placeholder="Record or type your structured response:
+• Situation: Context of the system, challenge, or team dynamic...
+• Task: Goal, constraints, throughput requirements...
+• Action: Architecture choices, algorithm implementation, edge cases handled...
+• Result: Concrete performance metrics, trade-offs, and lessons learned..."
+                  className="flex-1 min-h-[220px] w-full p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono resize-none leading-relaxed shadow-inner"
                 />
               </div>
             )}
@@ -595,23 +967,36 @@ export const InterviewRoom: FC = () => {
               </button>
             </div>
 
-            {/* Right: Submit & Evaluation */}
-            <div className="flex items-center gap-3">
+            {/* Right: Run Code & Submit & Evaluation */}
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={handleRunCode}
+                disabled={isRunningCode}
+                className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-all shadow-sm"
+                title="Run test cases (Ctrl + Enter)"
+              >
+                <Play className="w-3.5 h-3.5 fill-emerald-400" />
+                <span>Run Tests</span>
+              </button>
+
               <button
                 onClick={() => {
+                  const hintText = currentQ?.hints?.[0] || 'Focus on breaking down the time and space trade-offs.'
                   addTranscript(
                     'ai',
-                    `Hint for Question ${currentQuestionIndex + 1}: ${currentQ?.hints?.[0] || 'Focus on breaking down the time and space trade-offs.'}`
+                    `Hint for Question ${currentQuestionIndex + 1}: ${hintText}`
                   )
+                  speakText(`Here is a hint: ${hintText}`)
                 }}
-                className="px-3 py-1.5 rounded-lg border border-slate-700 text-xs text-slate-300 hover:bg-slate-800 transition-colors"
+                className="px-3 py-2 rounded-xl border border-slate-700 text-xs text-slate-300 hover:bg-slate-800 transition-colors flex items-center gap-1.5"
               >
-                Request AI Hint
+                <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
+                <span>Request AI Hint</span>
               </button>
 
               <button
                 onClick={() => setShowEndModal(true)}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-750 border border-slate-700 text-xs font-medium text-slate-300 hover:text-white transition-all"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-750 border border-slate-700 text-xs font-medium text-slate-300 hover:text-white transition-all"
               >
                 <BarChart3 className="w-3.5 h-3.5 text-indigo-400" />
                 <span>Finish & View Report</span>
@@ -651,7 +1036,27 @@ export const InterviewRoom: FC = () => {
         )}
       </div>
 
-      {/* 3. FINISH INTERVIEW CONFIRMATION MODAL */}
+      {/* 3. VOICE & AUDIO SETTINGS MODAL */}
+      <VoiceSettingsModal
+        isOpen={showVoiceSettings}
+        onClose={() => setShowVoiceSettings(false)}
+        voices={voices}
+        selectedVoiceURI={selectedVoiceURI}
+        onSelectVoice={(uri) => {
+          setSelectedVoiceURI(uri)
+          setVoiceSettings({ voiceURI: uri })
+        }}
+        speechRate={speechRate}
+        onChangeSpeechRate={(rate) => setVoiceSettings({ speechRate: rate })}
+        autoSpeakQuestions={autoSpeakQuestions}
+        onToggleAutoSpeak={(autoSpeak) => setVoiceSettings({ autoSpeakQuestions: autoSpeak })}
+        soundEffectsEnabled={soundEffectsEnabled}
+        onToggleSoundEffects={(sfx) => setVoiceSettings({ soundEffectsEnabled: sfx })}
+        onTestVoice={handleTestVoice}
+        isTestingVoice={isTestingVoice}
+      />
+
+      {/* 4. FINISH INTERVIEW CONFIRMATION MODAL */}
       {showEndModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">

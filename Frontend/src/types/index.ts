@@ -12,6 +12,24 @@ export type Difficulty = 'junior' | 'mid' | 'senior' | 'lead' | 'easy' | 'medium
 
 export type SessionStatus = 'idle' | 'in-progress' | 'paused' | 'evaluating' | 'completed'
 
+export interface TestCase {
+  id: string
+  input: string
+  expectedOutput: string
+  description?: string
+}
+
+export interface TestExecutionResult {
+  testCaseId: string
+  input: string
+  expectedOutput: string
+  actualOutput?: string
+  passed: boolean
+  executionTimeMs: number
+  error?: string
+  logs?: string[]
+}
+
 export interface Question {
   id: string
   title: string
@@ -25,6 +43,9 @@ export interface Question {
   acceptanceRate?: string
   hints?: string[]
   starterCode?: string
+  languageStarterCodes?: Record<string, string>
+  functionName?: string
+  testCases?: TestCase[]
   language?: string
   expectedComplexity?: {
     time?: string
@@ -128,11 +149,16 @@ export interface InterviewSessionState {
   timeRemainingSeconds: number
   isTimerRunning: boolean
   
-  // Audio / Stream state
+  // Audio / Stream & Voice state
   isAiSpeaking: boolean
   isListening: boolean
   candidateAudioEnabled: boolean
   candidateVideoEnabled: boolean
+  candidateNotes?: string
+  speechRate?: number
+  autoSpeakQuestions?: boolean
+  soundEffectsEnabled?: boolean
+  selectedVoiceURI?: string | null
   
   // Workspace / Code
   activeCode: string
@@ -168,6 +194,13 @@ export interface InterviewSessionState {
   
   setActiveCode: (code: string) => void
   setActiveLanguage: (lang: string) => void
+  setCandidateNotes: (notes: string) => void
+  setVoiceSettings: (settings: {
+    voiceURI?: string | null
+    speechRate?: number
+    autoSpeakQuestions?: boolean
+    soundEffectsEnabled?: boolean
+  }) => void
   
   toggleAudio: () => void
   toggleVideo: () => void
@@ -180,3 +213,4 @@ export interface InterviewSessionState {
   toggleFeedbackPanel: (open?: boolean) => void
   setActiveTab: (tab: 'workspace' | 'transcript' | 'feedback') => void
 }
+

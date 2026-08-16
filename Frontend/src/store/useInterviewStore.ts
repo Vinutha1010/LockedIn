@@ -9,6 +9,7 @@ import type {
 } from '@/types'
 import { QUESTION_BANK } from '@/data/questions'
 import { evaluateCandidateSubmission } from '@/lib/evaluator'
+import { soundEffects } from '@/lib/soundEffects'
 
 const DEFAULT_MOCK_QUESTIONS: Question[] = QUESTION_BANK.slice(0, 3)
 
@@ -28,11 +29,16 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
   timeRemainingSeconds: 2700, // 45 minutes
   isTimerRunning: false,
 
-  // AV
+  // AV & Voice preferences
   isAiSpeaking: false,
   isListening: false,
   candidateAudioEnabled: true,
   candidateVideoEnabled: true,
+  candidateNotes: '',
+  speechRate: 1.0,
+  autoSpeakQuestions: false,
+  soundEffectsEnabled: true,
+  selectedVoiceURI: null,
 
   // Code & Language
   activeCode: DEFAULT_MOCK_QUESTIONS[0]?.starterCode || '',
@@ -112,6 +118,7 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
   },
 
   startSession: () => {
+    soundEffects.playSessionStart()
     set({ sessionStatus: 'in-progress', isTimerRunning: true })
   },
 
@@ -311,8 +318,11 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
   },
 
   setQuestionIndex: (index: number) => {
-    const { questions, answers } = get()
+    const { questions, answers, soundEffectsEnabled } = get()
     if (index >= 0 && index < questions.length) {
+      if (soundEffectsEnabled) {
+        soundEffects.playQuestionAdvance()
+      }
       const q = questions[index]
       const existingAnswer = answers[q.id]
       set({
@@ -364,6 +374,23 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
 
   setActiveLanguage: (lang: string) => {
     set({ activeLanguage: lang })
+  },
+
+  setCandidateNotes: (notes: string) => {
+    set({ candidateNotes: notes })
+  },
+
+  setVoiceSettings: (settings) => {
+    if (settings.soundEffectsEnabled !== undefined) {
+      soundEffects.setSoundEnabled(settings.soundEffectsEnabled)
+    }
+    set((state) => ({
+      ...state,
+      selectedVoiceURI: settings.voiceURI !== undefined ? settings.voiceURI : state.selectedVoiceURI,
+      speechRate: settings.speechRate !== undefined ? settings.speechRate : state.speechRate,
+      autoSpeakQuestions: settings.autoSpeakQuestions !== undefined ? settings.autoSpeakQuestions : state.autoSpeakQuestions,
+      soundEffectsEnabled: settings.soundEffectsEnabled !== undefined ? settings.soundEffectsEnabled : state.soundEffectsEnabled,
+    }))
   },
 
   toggleAudio: () => {
@@ -440,6 +467,10 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
     // Run dynamic evaluation engine
     setTimeout(() => {
       const feedback = evaluateCandidateSubmission(currentQ, candidateAnswer)
+
+      if (get().soundEffectsEnabled) {
+        soundEffects.playSuccessSubmission()
+      }
 
       set((state) => ({
         sessionStatus: 'in-progress',

@@ -122,8 +122,8 @@ npm run build
 - [x] **Phase 1**: Frontend Core, Dark Slate Design System, Monaco Editor, Zustand Store, AI Feedback Drawer, and Interview Room.
 - [x] **Phase 2**: Post-Interview Comprehensive Report page (`/report/:id`) with PDF export & hiring recommendation badges.
 - [x] **Phase 3**: Question Bank & Practice Library (`/questions`) with multi-track search, problem drawer & custom playlists.
-- [ ] **Phase 4**: Web Speech API integration (real voice-to-text and AI voice reading prompts).
-- [ ] **Phase 5**: Backend API (Node.js, Express, PostgreSQL, Prisma, Gemini/Claude AI integration, Judge0 code execution).
+- [x] **Phase 4**: Web Speech API integration (real voice-to-text, AI voice narration, webcam stream & Web Audio visualizer, Locky AI Mascot).
+- [x] **Phase 5**: Backend API & AI Intelligence Engine (Node.js, Express, Prisma ORM, SQLite/PostgreSQL, Google Gemini 2.0/1.5 Flash rubric grading, multi-language sandbox).
 
 ---
 

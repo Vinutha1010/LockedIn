@@ -22,18 +22,31 @@ export const QUESTION_BANK: Question[] = [
       'For each element `num`, calculate its complement: `target - num`. Check if the complement exists in the map.',
     ],
     starterCode: `function twoSum(nums: number[], target: number): number[] {
-  const map = new Map<number, number>();
-
-  for (let i = 0; i < nums.length; i++) {
-    const complement = target - nums[i];
-    if (map.has(complement)) {
-      return [map.get(complement)!, i];
-    }
-    map.set(nums[i], i);
-  }
-
+  // TODO: Implement single-pass Hash Map solution in O(N) time
+  
   return [];
 }`,
+    functionName: 'twoSum',
+    testCases: [
+      {
+        id: '1',
+        input: '[2, 7, 11, 15], 9',
+        expectedOutput: '[0, 1]',
+        description: 'Standard case where nums[0] + nums[1] = 9',
+      },
+      {
+        id: '2',
+        input: '[3, 2, 4], 6',
+        expectedOutput: '[1, 2]',
+        description: 'Non-consecutive elements',
+      },
+      {
+        id: '3',
+        input: '[3, 3], 6',
+        expectedOutput: '[0, 1]',
+        description: 'Duplicate values adding to target',
+      },
+    ],
     language: 'typescript',
     expectedComplexity: {
       time: 'O(N)',
@@ -72,18 +85,19 @@ export const QUESTION_BANK: Question[] = [
 }
 
 function reverseList(head: ListNode | null): ListNode | null {
-  let prev: ListNode | null = null;
-  let curr = head;
-
-  while (curr !== null) {
-    const nextTemp = curr.next;
-    curr.next = prev;
-    prev = curr;
-    curr = nextTemp;
-  }
-
-  return prev;
+  // TODO: Implement iterative 3-pointer list reversal
+  
+  return null;
 }`,
+    functionName: 'reverseList',
+    testCases: [
+      {
+        id: '1',
+        input: 'null',
+        expectedOutput: 'null',
+        description: 'Empty list edge case',
+      },
+    ],
     language: 'typescript',
     expectedComplexity: {
       time: 'O(N)',
@@ -114,25 +128,43 @@ function reverseList(head: ListNode | null): ListNode | null {
       'At the end of the string, verify if the stack is completely empty.',
     ],
     starterCode: `function isValidParentheses(s: string): boolean {
-  const stack: string[] = [];
-  const pairs: Record<string, string> = {
-    ')': '(',
-    '}': '{',
-    ']': '[',
-  };
-
-  for (const char of s) {
-    if (char === '(' || char === '{' || char === '[') {
-      stack.push(char);
-    } else if (pairs[char]) {
-      if (stack.length === 0 || stack.pop() !== pairs[char]) {
-        return false;
-      }
-    }
-  }
-
-  return stack.length === 0;
+  // TODO: Use a LIFO stack to match opening and closing brackets
+  
+  return false;
 }`,
+    functionName: 'isValidParentheses',
+    testCases: [
+      {
+        id: '1',
+        input: '"()"',
+        expectedOutput: 'true',
+        description: 'Single valid pair',
+      },
+      {
+        id: '2',
+        input: '"()[]{}"',
+        expectedOutput: 'true',
+        description: 'Multiple valid consecutive pairs',
+      },
+      {
+        id: '3',
+        input: '"(]"',
+        expectedOutput: 'false',
+        description: 'Mismatched closing bracket type',
+      },
+      {
+        id: '4',
+        input: '"([)]"',
+        expectedOutput: 'false',
+        description: 'Improper nesting sequence',
+      },
+      {
+        id: '5',
+        input: '"{[]}"',
+        expectedOutput: 'true',
+        description: 'Valid nested brackets',
+      },
+    ],
     language: 'typescript',
     expectedComplexity: {
       time: 'O(N)',
@@ -162,16 +194,37 @@ function reverseList(head: ListNode | null): ListNode | null {
       'Track `maxSum` globally across the loop.',
     ],
     starterCode: `function maxSubArray(nums: number[]): number {
-  let currentSum = nums[0];
-  let maxSum = nums[0];
-
-  for (let i = 1; i < nums.length; i++) {
-    currentSum = Math.max(nums[i], currentSum + nums[i]);
-    maxSum = Math.max(maxSum, currentSum);
-  }
-
-  return maxSum;
+  // TODO: Implement Kadane's O(N) dynamic programming algorithm
+  
+  return 0;
 }`,
+    functionName: 'maxSubArray',
+    testCases: [
+      {
+        id: '1',
+        input: '[-2, 1, -3, 4, -1, 2, 1, -5, 4]',
+        expectedOutput: '6',
+        description: 'Subarray [4, -1, 2, 1] has max sum 6',
+      },
+      {
+        id: '2',
+        input: '[1]',
+        expectedOutput: '1',
+        description: 'Single element array',
+      },
+      {
+        id: '3',
+        input: '[5, 4, -1, 7, 8]',
+        expectedOutput: '23',
+        description: 'All-positive except one number',
+      },
+      {
+        id: '4',
+        input: '[-5, -2, -8, -1]',
+        expectedOutput: '-1',
+        description: 'All negative numbers (should return max negative element)',
+      },
+    ],
     language: 'typescript',
     expectedComplexity: {
       time: 'O(N)',
@@ -212,26 +265,19 @@ function reverseList(head: ListNode | null): ListNode | null {
 }
 
 function levelOrder(root: TreeNode | null): number[][] {
-  if (!root) return [];
-  const result: number[][] = [];
-  const queue: TreeNode[] = [root];
-
-  while (queue.length > 0) {
-    const levelSize = queue.length;
-    const currentLevel: number[] = [];
-
-    for (let i = 0; i < levelSize; i++) {
-      const node = queue.shift()!;
-      currentLevel.push(node.val);
-      if (node.left) queue.push(node.left);
-      if (node.right) queue.push(node.right);
-    }
-
-    result.push(currentLevel);
-  }
-
-  return result;
+  // TODO: Implement BFS level-by-level queue traversal
+  
+  return [];
 }`,
+    functionName: 'levelOrder',
+    testCases: [
+      {
+        id: '1',
+        input: 'null',
+        expectedOutput: '[]',
+        description: 'Empty root node returns empty array',
+      },
+    ],
     language: 'typescript',
     expectedComplexity: {
       time: 'O(N)',
@@ -265,6 +311,21 @@ function levelOrder(root: TreeNode | null): number[][] {
       'Why is thread context switching cheaper than process context switching? Mention TLB flushing and page table swaps.',
       'List common IPC mechanisms: Pipes, Shared Memory, Message Queues, Sockets, and Semaphores.',
     ],
+    starterCode: `/**
+ * CS Fundamentals: Operating Systems Concept Breakdown
+ *
+ * 1. Process vs Thread Architecture:
+ *    - Memory layout (Stack vs Heap)
+ *    - Control Blocks (PCB vs TCB)
+ *
+ * 2. Context Switching Overhead:
+ *    - Registers, Program Counter, CPU cache, TLB invalidation
+ *
+ * 3. IPC (Inter-Process Communication) Mechanisms:
+ *    - Sockets, Pipes, Shared Memory, Message Queues
+ */
+`,
+    language: 'typescript',
     rubricCriteria: [
       'Accurate memory layout distinction (Stack per thread, Shared Heap)',
       'Explanation of Context Switching overhead (PCB vs TCB, CPU registers, TLB cache invalidation)',
@@ -290,6 +351,21 @@ function levelOrder(root: TreeNode | null): number[][] {
       'B+ Trees store data pointers only at leaf nodes, and leaf nodes are linked sequentially, allowing ultra-fast range queries (`BETWEEN`, `>`, `<`).',
       'A Clustered index defines the physical order of rows on disk (only 1 per table, usually Primary Key), whereas Non-Clustered creates a separate lookup structure.',
     ],
+    starterCode: `/**
+ * DBMS & SQL Architecture Notes
+ *
+ * 1. ACID Properties:
+ *    - Atomicity: ...
+ *    - Consistency: ...
+ *    - Isolation: ...
+ *    - Durability: ...
+ *
+ * 2. Indexing Data Structures:
+ *    - Why B+ Trees for Disk Blocks: ...
+ *    - Clustered vs Non-Clustered Indexes: ...
+ */
+`,
+    language: 'typescript',
     rubricCriteria: [
       'Clear definition and real-world banking example for ACID transactions',
       'B+ Tree structural advantages for block storage and range scans',
@@ -317,6 +393,17 @@ function levelOrder(root: TreeNode | null): number[][] {
       '4. Application: HTTP GET request, server response (200 OK with HTML).',
       '5. Browser Engine: Parse HTML to DOM tree, CSS to CSSOM, render tree creation, layout/reflow, and paint.',
     ],
+    starterCode: `/**
+ * Networking & Browser Request Lifecycle
+ *
+ * 1. DNS Resolution Stages: ...
+ * 2. TCP 3-Way Handshake: ...
+ * 3. TLS 1.3 Handshake & Encryption: ...
+ * 4. HTTP Request / Response: ...
+ * 5. Browser Critical Rendering Path (DOM -> CSSOM -> Layout -> Paint): ...
+ */
+`,
+    language: 'typescript',
     rubricCriteria: [
       'Recursive vs Iterative DNS resolution breakdown',
       'TCP 3-way handshake sequence (SYN, SYN-ACK, ACK)',
@@ -343,32 +430,17 @@ function levelOrder(root: TreeNode | null): number[][] {
       'Inheritance: Mechanism where a child class acquires properties and behaviors from a parent class (code reusability).',
       'Polymorphism: "Many forms" — static/compile-time (overloading) and dynamic/runtime (overriding with virtual functions).',
     ],
-    starterCode: `// Example demonstrating OOP Pillars in TypeScript / Java-style
+    starterCode: `// Write your OOPs demonstration class hierarchy here
 abstract class Vehicle {
-  constructor(private make: string, private model: string) {} // Encapsulation
-
-  abstract calculateMaxSpeed(): number; // Abstraction
-
-  getVehicleInfo(): string {
-    return \`\${this.make} \${this.model}\`;
-  }
+  // 1. Encapsulation: Private members with accessors
+  // 2. Abstraction: Abstract methods
 }
 
-class Car extends Vehicle { // Inheritance
-  constructor(make: string, model: string, private horsepower: number) {
-    super(make, model);
-  }
-
-  // Runtime Polymorphism (Overriding)
-  calculateMaxSpeed(): number {
-    return this.horsepower * 1.5;
-  }
-}`,
+class Car extends Vehicle {
+  // 3. Inheritance & 4. Polymorphism
+}
+`,
     language: 'typescript',
-    expectedComplexity: {
-      time: 'Concept Evaluation',
-      space: 'Concept Evaluation',
-    },
     rubricCriteria: [
       'Accurate definitions for all 4 OOP pillars',
       'Compile-time vs Runtime polymorphism distinction',
@@ -399,21 +471,37 @@ class Car extends Vehicle { // Inheritance
       'Update `maxLength = Math.max(maxLength, right - left + 1)`.',
     ],
     starterCode: `function lengthOfLongestSubstring(s: string): number {
-  const charSet = new Set<string>();
-  let left = 0;
-  let maxLength = 0;
-
-  for (let right = 0; right < s.length; right++) {
-    while (charSet.has(s[right])) {
-      charSet.delete(s[left]);
-      left++;
-    }
-    charSet.add(s[right]);
-    maxLength = Math.max(maxLength, right - left + 1);
-  }
-
-  return maxLength;
+  // TODO: Implement sliding window technique using a Set or Map
+  
+  return 0;
 }`,
+    functionName: 'lengthOfLongestSubstring',
+    testCases: [
+      {
+        id: '1',
+        input: '"abcabcbb"',
+        expectedOutput: '3',
+        description: 'Answer is "abc", with length 3',
+      },
+      {
+        id: '2',
+        input: '"bbbbb"',
+        expectedOutput: '1',
+        description: 'Answer is "b", with length 1',
+      },
+      {
+        id: '3',
+        input: '"pwwkew"',
+        expectedOutput: '3',
+        description: 'Answer is "wke", with length 3',
+      },
+      {
+        id: '4',
+        input: '""',
+        expectedOutput: '0',
+        description: 'Empty string',
+      },
+    ],
     language: 'typescript',
     expectedComplexity: {
       time: 'O(N)',
@@ -443,18 +531,31 @@ class Car extends Vehicle { // Inheritance
       'Use the sorted word as the key in a Hash Map `Map<string, string[]>` to group matching anagrams.',
     ],
     starterCode: `function groupAnagrams(strs: string[]): string[][] {
-  const map = new Map<string, string[]>();
-
-  for (const str of strs) {
-    const key = str.split('').sort().join('');
-    if (!map.has(key)) {
-      map.set(key, []);
-    }
-    map.get(key)!.push(str);
-  }
-
-  return Array.from(map.values());
+  // TODO: Group words by their sorted character signature using a Map
+  
+  return [];
 }`,
+    functionName: 'groupAnagrams',
+    testCases: [
+      {
+        id: '1',
+        input: '["eat", "tea", "tan", "ate", "nat", "bat"]',
+        expectedOutput: '[["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]',
+        description: '3 anagram groupings',
+      },
+      {
+        id: '2',
+        input: '[""]',
+        expectedOutput: '[[""]]',
+        description: 'Single empty string',
+      },
+      {
+        id: '3',
+        input: '["a"]',
+        expectedOutput: '[["a"]]',
+        description: 'Single character string',
+      },
+    ],
     language: 'typescript',
     expectedComplexity: {
       time: 'O(N * K log K) where K is max word length',
@@ -485,24 +586,31 @@ class Car extends Vehicle { // Inheritance
       'Compare `s[left].toLowerCase()` with `s[right].toLowerCase()`. If they mismatch, return false.',
     ],
     starterCode: `function isPalindrome(s: string): boolean {
-  let left = 0;
-  let right = s.length - 1;
-
-  const isAlphaNum = (char: string) => /[a-z0-9]/i.test(char);
-
-  while (left < right) {
-    while (left < right && !isAlphaNum(s[left])) left++;
-    while (left < right && !isAlphaNum(s[right])) right--;
-
-    if (s[left].toLowerCase() !== s[right].toLowerCase()) {
-      return false;
-    }
-    left++;
-    right--;
-  }
-
-  return true;
+  // TODO: Implement two-pointer palindrome check in O(1) space
+  
+  return false;
 }`,
+    functionName: 'isPalindrome',
+    testCases: [
+      {
+        id: '1',
+        input: '"A man, a plan, a canal: Panama"',
+        expectedOutput: 'true',
+        description: 'Valid phrase with punctuation and spaces',
+      },
+      {
+        id: '2',
+        input: '"race a car"',
+        expectedOutput: 'false',
+        description: 'Not a palindrome',
+      },
+      {
+        id: '3',
+        input: '" "',
+        expectedOutput: 'true',
+        description: 'Single space is an empty palindrome',
+      },
+    ],
     language: 'typescript',
     expectedComplexity: {
       time: 'O(N)',
@@ -532,24 +640,25 @@ class Car extends Vehicle { // Inheritance
       'Iterate through sorted intervals: if the current interval starts before or at the end of the previous merged interval, merge them by updating `end = Math.max(prevEnd, currEnd)`.',
     ],
     starterCode: `function merge(intervals: number[][]): number[][] {
-  if (intervals.length <= 1) return intervals;
-  intervals.sort((a, b) => a[0] - b[0]);
-
-  const merged: number[][] = [intervals[0]];
-
-  for (let i = 1; i < intervals.length; i++) {
-    const current = intervals[i];
-    const last = merged[merged.length - 1];
-
-    if (current[0] <= last[1]) {
-      last[1] = Math.max(last[1], current[1]);
-    } else {
-      merged.push(current);
-    }
-  }
-
-  return merged;
+  // TODO: Sort intervals by start time and merge overlapping intervals
+  
+  return [];
 }`,
+    functionName: 'merge',
+    testCases: [
+      {
+        id: '1',
+        input: '[[1, 3], [2, 6], [8, 10], [15, 18]]',
+        expectedOutput: '[[1, 6], [8, 10], [15, 18]]',
+        description: 'Merging [1, 3] and [2, 6] into [1, 6]',
+      },
+      {
+        id: '2',
+        input: '[[1, 4], [4, 5]]',
+        expectedOutput: '[[1, 5]]',
+        description: 'Intervals overlapping at endpoint 4',
+      },
+    ],
     language: 'typescript',
     expectedComplexity: {
       time: 'O(N log N) due to sorting',
@@ -584,6 +693,18 @@ class Car extends Vehicle { // Inheritance
       'Work done in 4 days = 4 * (5/36) = 20/36 = 5/9.',
       'Remaining work = 1 - 5/9 = 4/9. Time taken by B alone = (4/9) / (1/18) = 8 days.',
     ],
+    starterCode: `/**
+ * Aptitude Problem: Time & Work
+ *
+ * Calculate step-by-step:
+ * 1. 1-day work of Person A = 
+ * 2. 1-day work of Person B = 
+ * 3. Work completed in 4 days = 
+ * 4. Remaining work = 
+ * 5. Days taken by Person B = 
+ */
+`,
+    language: 'typescript',
     rubricCriteria: [
       'Correct calculation of individual daily unit work',
       'Accurate total work fraction completed in 4 days',
@@ -609,6 +730,15 @@ class Car extends Vehicle { // Inheritance
       'Part 1 (All different): Pick 1 Red, 1 Blue, 1 Green = 5C1 * 4C1 * 3C1 = 5 * 4 * 3 = 60. Probability = 60 / 220 = 3/11.',
       'Part 2 (Exactly 2 Red): Pick 2 Red and 1 Non-Red (7 others) = 5C2 * 7C1 = 10 * 7 = 70. Probability = 70 / 220 = 7/22.',
     ],
+    starterCode: `/**
+ * Aptitude Problem: Probability & Combinatorics
+ *
+ * 1. Total Sample Space (12C3): ...
+ * 2. Case 1 (All 3 distinct colors: 5C1 * 4C1 * 3C1 / 12C3): ...
+ * 3. Case 2 (Exactly 2 Red: 5C2 * 7C1 / 12C3): ...
+ */
+`,
+    language: 'typescript',
     rubricCriteria: [
       'Correct total sample space calculation (12C3 = 220)',
       'Correct favorable outcomes for distinct colors (3/11)',
@@ -634,6 +764,17 @@ class Car extends Vehicle { // Inheritance
       'Angle = |30(3) - (11/2)(40)| = |90 - 220| = 130°.',
       'Reflex angle = 360° - 130° = 230°.',
     ],
+    starterCode: `/**
+ * Clock Angle Derivation:
+ * Time: 3:40
+ * Formula: Angle = |30*H - (11/2)*M|
+ *
+ * 1. Angle Calculation: ...
+ * 2. Acute Angle: ...
+ * 3. Reflex Angle: ...
+ */
+`,
+    language: 'typescript',
     rubricCriteria: [
       'Explanation of hour hand movement rate (0.5 deg/min) and minute hand (6 deg/min)',
       'Accurate acute angle calculation (130°)',
@@ -659,6 +800,18 @@ class Car extends Vehicle { // Inheritance
       'Phase 3: Eliminate impossible candidates. Only A2, A3, B1, B2, and C1 can compete for 2nd and 3rd place.',
       'Race 7: Race those 5 horses to find 2nd and 3rd place. Total = 7 races!',
     ],
+    starterCode: `/**
+ * 25 Horses Puzzle Breakdown
+ *
+ * Phase 1 (Group Stage Races 1 to 5): ...
+ * Phase 2 (Winners Race 6): ...
+ * Phase 3 (Candidate Elimination Logic): ...
+ * Phase 4 (Final Showdown Race 7): ...
+ *
+ * Total Races = 
+ */
+`,
+    language: 'typescript',
     rubricCriteria: [
       'Clear breakdown of initial 5 group races',
       'Race 6 (winners race) and identification of #1 horse',

@@ -3,6 +3,7 @@ import { Dashboard } from '@/pages/Dashboard'
 import { InterviewRoom } from '@/pages/InterviewRoom'
 import { Report } from '@/pages/Report'
 import { Questions } from '@/pages/Questions'
+import { LockyChatbot } from '@/components/chat/LockyChatbot'
 
 export function App() {
   return (
@@ -16,6 +17,7 @@ export function App() {
         <Route path="/report/:sessionId" element={<Report />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <LockyChatbot />
     </BrowserRouter>
   )
 }

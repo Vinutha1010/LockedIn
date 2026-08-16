@@ -1,0 +1,97 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String             @id @default(cuid())
+  name            String
+  email           String?            @unique
+  targetRole      String             @default("Software Engineer (SDE)")
+  experienceLevel String             @default("Mid-Level")
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  sessions        InterviewSession[]
+}
+
+model Question {
+  id                     String           @id
+  title                  String
+  description            String
+  roundType              String           // dsa, system-design, behavioral, cs-fundamentals, aptitude
+  difficulty             String           // Easy, Medium, Hard
+  category               String
+  tags                   String?          // JSON array string
+  companyTags            String?          // JSON array string
+  frequency              String?          // High, Medium, Trending
+  acceptanceRate         String?
+  expectedTimeComplexity String?
+  expectedSpaceComplexity String?
+  hints                  String?          // JSON array string
+  starterCode            String?
+  languageStarterCodes   String?          // JSON object string
+  functionName           String?
+  testCases              String?          // JSON array string
+  rubricCriteria         String?          // JSON array string
+  createdAt              DateTime         @default(now())
+  answers                QuestionAnswer[]
+}
+
+model InterviewSession {
+  id               String           @id @default(cuid())
+  userId           String?
+  user             User?            @relation(fields: [userId], references: [id])
+  candidateName    String           @default("Alex Chen")
+  targetRole       String           @default("Software Engineer (SDE)")
+  roundType        String           @default("dsa")
+  difficulty       String           @default("Medium")
+  timeLimitMinutes Int              @default(45)
+  status           String           @default("in-progress") // in-progress, completed, evaluating
+  questionIds      String           // JSON array of question IDs
+  startedAt        DateTime         @default(now())
+  completedAt      DateTime?
+  overallScore     Float?
+  answers          QuestionAnswer[]
+  report           InterviewReport?
+}
+
+model QuestionAnswer {
+  id                String           @id @default(cuid())
+  sessionId         String
+  session           InterviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId        String
+  question          Question         @relation(fields: [questionId], references: [id])
+  submittedCode     String?
+  submittedNotes    String?
+  language          String           @default("typescript")
+  testsPassed       Int              @default(0)
+  testsTotal        Int              @default(0)
+  executionTimeMs   Float?
+  timeSpentSeconds  Int              @default(0)
+  aiEvaluationScore Float?
+  aiFeedback        String?          // JSON string of AI feedback
+  submittedAt       DateTime         @default(now())
+}
+
+model InterviewReport {
+  id                   String           @id @default(cuid())
+  sessionId            String           @unique
+  session              InterviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  overallScore         Float
+  technicalScore       Float
+  communicationScore   Float
+  problemSolvingScore  Float
+  systemDesignScore    Float
+  behavioralScore      Float
+  radarScores          String           // JSON string of radar category metrics
+  hiringRecommendation String           // Strong Hire, Hire, Lean Hire, Re-evaluate
+  summary              String
+  strengths            String           // JSON array string
+  weaknesses           String           // JSON array string
+  roadmap              String           // JSON array string of 4-week preparation plan
+  createdAt            DateTime         @default(now())
+}

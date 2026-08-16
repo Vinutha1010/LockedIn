@@ -18,10 +18,14 @@ pnpm-debug.log*
 
 # Environment files
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
+
+# SQLite & Database
+*.db
+*.db-journal
+dev.db
+dev.db-journal
 
 # Editor and OS files
 .DS_Store
