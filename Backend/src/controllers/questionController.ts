@@ -17,6 +17,7 @@ export async function getQuestions(req: Request, res: Response): Promise<void> {
 
     const parsed = questions.map((q) => ({
       ...q,
+      options: q.options ? JSON.parse(q.options) : undefined,
       tags: q.tags ? JSON.parse(q.tags) : [],
       companyTags: q.companyTags ? JSON.parse(q.companyTags) : [],
       hints: q.hints ? JSON.parse(q.hints) : [],
@@ -45,6 +46,7 @@ export async function getQuestionById(req: Request, res: Response): Promise<void
 
     const parsed = {
       ...question,
+      options: question.options ? JSON.parse(question.options) : undefined,
       tags: question.tags ? JSON.parse(question.tags) : [],
       companyTags: question.companyTags ? JSON.parse(question.companyTags) : [],
       hints: question.hints ? JSON.parse(question.hints) : [],

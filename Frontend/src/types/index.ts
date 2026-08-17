@@ -2,6 +2,7 @@ export type RoundType =
   | 'dsa'
   | 'cs-fundamentals'
   | 'coding'
+  | 'pattern-programming'
   | 'aptitude'
   | 'technical'
   | 'system-design'
@@ -37,6 +38,10 @@ export interface Question {
   roundType: RoundType
   difficulty: Difficulty
   category: string
+  type?: 'coding' | 'mcq'
+  options?: string[]
+  correctAnswer?: string
+  explanation?: string
   tags?: string[]
   companyTags?: string[]
   frequency?: 'High' | 'Medium' | 'Trending'
@@ -81,6 +86,7 @@ export interface CandidateAnswer {
   questionId: string
   speechText?: string
   code?: string
+  selectedOption?: string
   language?: string
   submittedAt: string
 }

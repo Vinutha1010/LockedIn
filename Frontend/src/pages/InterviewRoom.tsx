@@ -36,6 +36,7 @@ import { AudioVisualizer } from '@/components/interview/AudioVisualizer'
 import { SpeechControls } from '@/components/interview/SpeechControls'
 import { VoiceSettingsModal } from '@/components/interview/VoiceSettingsModal'
 import { CodeRunnerPanel } from '@/components/interview/CodeRunnerPanel'
+import { MCQWorkspace } from '@/components/interview/MCQWorkspace'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
 import { useCameraStream } from '@/hooks/useCameraStream'
@@ -99,7 +100,16 @@ export const InterviewRoom: FC = () => {
   const [runnerLogs, setRunnerLogs] = useState<string[]>([])
   const [runnerExecutionTime, setRunnerExecutionTime] = useState<number | undefined>(undefined)
   const [runnerCompileError, setRunnerCompileError] = useState<string | undefined>(undefined)
-  const [isRunnerPanelExpanded, setIsRunnerPanelExpanded] = useState(true)
+  const [isRunnerPanelExpanded, setIsRunnerPanelExpanded] = useState(false)
+
+  const currentQ = questions[currentQuestionIndex]
+
+  const isCurrentMCQ = Boolean(
+    currentQ &&
+      (currentQ.type === 'mcq' ||
+        currentQ.roundType === 'aptitude' ||
+        (currentQ.options && currentQ.options.length > 0))
+  )
 
   // Reset runner output on question change
   useEffect(() => {
@@ -109,7 +119,6 @@ export const InterviewRoom: FC = () => {
     setRunnerExecutionTime(undefined)
   }, [currentQuestionIndex])
 
-  const currentQ = questions[currentQuestionIndex]
   const currentFeedback = currentQ ? feedbacks[currentQ.id] : undefined
   const isEvaluating = sessionStatus === 'evaluating'
 
@@ -773,176 +782,206 @@ export const InterviewRoom: FC = () => {
           </div>
         </div>
 
-        {/* CENTER/RIGHT: INTERACTIVE WORKSPACE (MONACO & SPEECH NOTES) */}
+        {/* CENTER/RIGHT: INTERACTIVE WORKSPACE (MCQ WORKSPACE OR MONACO & SPEECH NOTES) */}
         <div className="flex-1 flex flex-col bg-[#0b0f17] overflow-hidden">
-          {/* Workspace Tab Header */}
-          <div className="h-11 px-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setActiveTab('editor')}
-                className={cn(
-                  'flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all',
-                  activeTab === 'editor'
-                    ? 'bg-slate-800 text-white border border-slate-700 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                )}
-              >
-                <Code2 className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Code Editor</span>
-              </button>
+          {isCurrentMCQ && currentQ ? (
+            <MCQWorkspace
+              question={currentQ}
+              feedback={currentFeedback}
+              isEvaluating={isEvaluating}
+              candidateNotes={candidateNotes}
+              speechDraft={candidateSpeechDraft}
+              onNotesChange={(notes) => {
+                setCandidateNotes(notes)
+                setCandidateSpeechDraft(notes)
+              }}
+              onSubmitAnswer={async (payload) => {
+                stopSpeaking()
+                if (isRecListening) stopSpeechRec()
+                await submitAnswer({
+                  selectedOption: payload.selectedOption,
+                  code: payload.notes,
+                  speechText: payload.speechText,
+                })
+              }}
+              isListening={isRecListening}
+              onToggleSpeech={() => {
+                if (isRecListening) stopSpeechRec()
+                else startSpeechRec()
+              }}
+            />
+          ) : (
+            <>
+              {/* Workspace Tab Header */}
+              <div className="h-11 px-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setActiveTab('editor')}
+                    className={cn(
+                      'flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all',
+                      activeTab === 'editor'
+                        ? 'bg-slate-800 text-white border border-slate-700 shadow-sm'
+                        : 'text-slate-400 hover:text-slate-200'
+                    )}
+                  >
+                    <Code2 className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Code Editor</span>
+                  </button>
 
-              <button
-                onClick={() => setActiveTab('notes')}
-                className={cn(
-                  'flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all',
-                  activeTab === 'notes'
-                    ? 'bg-slate-800 text-white border border-slate-700 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                )}
-              >
-                <FileText className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Behavioral / STAR Notes</span>
-                {candidateSpeechDraft && (
-                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                )}
-              </button>
-            </div>
-
-            {activeTab === 'editor' && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleRunCode}
-                  disabled={isRunningCode}
-                  className={cn(
-                    'px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm',
-                    isRunningCode
-                      ? 'bg-slate-800 text-slate-400 cursor-wait'
-                      : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20'
-                  )}
-                  title="Run code against test cases (Ctrl + Enter)"
-                >
-                  {isRunningCode ? (
-                    <>
-                      <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Running...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-3 h-3 fill-white" />
-                      <span>Run Tests</span>
-                    </>
-                  )}
-                </button>
-
-                <select
-                  value={activeLanguage}
-                  onChange={(e) => {
-                    const newLang = e.target.value
-                    setActiveLanguage(newLang)
-                    if (currentQ) {
-                      const template = getStarterCodeForLanguage(currentQ, newLang)
-                      setActiveCode(template)
-                    }
-                  }}
-                  className="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-md px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                >
-                  {languages.map((l) => (
-                    <option key={l.value} value={l.value}>
-                      {l.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-          </div>
-
-          {/* Active Workspace Viewport */}
-          <div className="flex-1 relative overflow-hidden bg-[#0d1117] flex flex-col">
-            {activeTab === 'editor' ? (
-              <div className="flex-1 flex flex-col h-full overflow-hidden">
-                <div className="flex-1 relative overflow-hidden">
-                  <Editor
-                    height="100%"
-                    language={activeLanguage}
-                    value={activeCode}
-                    theme="vs-dark"
-                    onChange={(value) => setActiveCode(value || '')}
-                    options={{
-                      fontSize: 13,
-                      fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
-                      fontLigatures: true,
-                      minimap: { enabled: false },
-                      scrollBeyondLastLine: false,
-                      automaticLayout: true,
-                      padding: { top: 12, bottom: 12 },
-                      tabSize: 2,
-                      lineNumbers: 'on',
-                      cursorBlinking: 'smooth',
-                      smoothScrolling: true,
-                    }}
-                  />
+                  <button
+                    onClick={() => setActiveTab('notes')}
+                    className={cn(
+                      'flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all',
+                      activeTab === 'notes'
+                        ? 'bg-slate-800 text-white border border-slate-700 shadow-sm'
+                        : 'text-slate-400 hover:text-slate-200'
+                    )}
+                  >
+                    <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Behavioral / STAR Notes</span>
+                    {candidateSpeechDraft && (
+                      <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                    )}
+                  </button>
                 </div>
 
-                {/* Bottom Test Cases & Console Runner Panel */}
-                <CodeRunnerPanel
-                  testCases={currentQ?.testCases}
-                  results={testResults}
-                  isRunning={isRunningCode}
-                  logs={runnerLogs}
-                  totalExecutionTimeMs={runnerExecutionTime}
-                  compileError={runnerCompileError}
-                  onRunCode={handleRunCode}
-                  isExpanded={isRunnerPanelExpanded}
-                  onToggleExpand={() => setIsRunnerPanelExpanded(!isRunnerPanelExpanded)}
-                />
+                {activeTab === 'editor' && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleRunCode}
+                      disabled={isRunningCode}
+                      className={cn(
+                        'px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm',
+                        isRunningCode
+                          ? 'bg-slate-800 text-slate-400 cursor-wait'
+                          : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20'
+                      )}
+                      title="Run code against test cases (Ctrl + Enter)"
+                    >
+                      {isRunningCode ? (
+                        <>
+                          <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Running...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-3 h-3 fill-white" />
+                          <span>Run Tests</span>
+                        </>
+                      )}
+                    </button>
+
+                    <select
+                      value={activeLanguage}
+                      onChange={(e) => {
+                        const newLang = e.target.value
+                        setActiveLanguage(newLang)
+                        if (currentQ) {
+                          const template = getStarterCodeForLanguage(currentQ, newLang)
+                          setActiveCode(template)
+                        }
+                      }}
+                      className="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-md px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                    >
+                      {languages.map((l) => (
+                        <option key={l.value} value={l.value}>
+                          {l.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="h-full p-5 flex flex-col space-y-4 bg-slate-950/60 overflow-y-auto">
-                {/* Speech Dictation Toolbar */}
-                <SpeechControls
-                  isSupported={isSpeechRecognitionSupported}
-                  isListening={isRecListening}
-                  interimTranscript={interimTranscript}
-                  speechDraft={candidateSpeechDraft}
-                  onStartListening={startSpeechRec}
-                  onStopListening={stopSpeechRec}
-                  onClearDraft={() => {
-                    setCandidateSpeechDraft('')
-                    setCandidateNotes('')
-                    resetSpeechRec()
-                  }}
-                  onInsertToEditor={handleAppendToEditor}
-                  onSimulateSpeech={handleSimulateSpeech}
-                  isSimulatingVoice={isSimulatingVoice}
-                  visualizerFrequencies={micFrequencyData}
-                  errorMessage={speechRecError}
-                />
 
-                <div className="flex items-center justify-between pt-1">
-                  <span className="text-xs font-semibold text-slate-300">
-                    STAR Framework Response Notes
-                  </span>
-                  <span className="text-[11px] text-slate-400">
-                    Auto-transcribed & editable
-                  </span>
-                </div>
+              {/* Active Workspace Viewport */}
+              <div className="flex-1 relative overflow-hidden bg-[#0d1117] flex flex-col">
+                {activeTab === 'editor' ? (
+                  <div className="flex-1 flex flex-col h-full overflow-hidden">
+                    <div className="flex-1 relative overflow-hidden">
+                      <Editor
+                        height="100%"
+                        language={activeLanguage}
+                        value={activeCode}
+                        theme="vs-dark"
+                        onChange={(value) => setActiveCode(value || '')}
+                        options={{
+                          fontSize: 13,
+                          fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
+                          fontLigatures: true,
+                          minimap: { enabled: false },
+                          scrollBeyondLastLine: false,
+                          automaticLayout: true,
+                          padding: { top: 12, bottom: 12 },
+                          tabSize: 2,
+                          lineNumbers: 'on',
+                          cursorBlinking: 'smooth',
+                          smoothScrolling: true,
+                        }}
+                      />
+                    </div>
 
-                <textarea
-                  value={candidateSpeechDraft}
-                  onChange={(e) => {
-                    setCandidateSpeechDraft(e.target.value)
-                    setCandidateNotes(e.target.value)
-                  }}
-                  placeholder="Record or type your structured response:
+                    {/* Bottom Test Cases & Console Runner Panel */}
+                    <CodeRunnerPanel
+                      testCases={currentQ?.testCases}
+                      results={testResults}
+                      isRunning={isRunningCode}
+                      logs={runnerLogs}
+                      totalExecutionTimeMs={runnerExecutionTime}
+                      compileError={runnerCompileError}
+                      onRunCode={handleRunCode}
+                      isExpanded={isRunnerPanelExpanded}
+                      onToggleExpand={() => setIsRunnerPanelExpanded(!isRunnerPanelExpanded)}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-full p-5 flex flex-col space-y-4 bg-slate-950/60 overflow-y-auto">
+                    {/* Speech Dictation Toolbar */}
+                    <SpeechControls
+                      isSupported={isSpeechRecognitionSupported}
+                      isListening={isRecListening}
+                      interimTranscript={interimTranscript}
+                      speechDraft={candidateSpeechDraft}
+                      onStartListening={startSpeechRec}
+                      onStopListening={stopSpeechRec}
+                      onClearDraft={() => {
+                        setCandidateSpeechDraft('')
+                        setCandidateNotes('')
+                        resetSpeechRec()
+                      }}
+                      onInsertToEditor={handleAppendToEditor}
+                      onSimulateSpeech={handleSimulateSpeech}
+                      isSimulatingVoice={isSimulatingVoice}
+                      visualizerFrequencies={micFrequencyData}
+                      errorMessage={speechRecError}
+                    />
+
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-xs font-semibold text-slate-300">
+                        STAR Framework Response Notes
+                      </span>
+                      <span className="text-[11px] text-slate-400">
+                        Auto-transcribed & editable
+                      </span>
+                    </div>
+
+                    <textarea
+                      value={candidateSpeechDraft}
+                      onChange={(e) => {
+                        setCandidateSpeechDraft(e.target.value)
+                        setCandidateNotes(e.target.value)
+                      }}
+                      placeholder="Record or type your structured response:
 • Situation: Context of the system, challenge, or team dynamic...
 • Task: Goal, constraints, throughput requirements...
 • Action: Architecture choices, algorithm implementation, edge cases handled...
 • Result: Concrete performance metrics, trade-offs, and lessons learned..."
-                  className="flex-1 min-h-[220px] w-full p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono resize-none leading-relaxed shadow-inner"
-                />
+                      className="flex-1 min-h-[220px] w-full p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono resize-none leading-relaxed shadow-inner"
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          )}
 
           {/* 3. WORKSPACE FOOTER / ACTIONS BAR */}
           <div className="h-16 px-5 border-t border-slate-800 bg-slate-900/90 backdrop-blur-md flex items-center justify-between shrink-0 z-10">
@@ -969,15 +1008,17 @@ export const InterviewRoom: FC = () => {
 
             {/* Right: Run Code & Submit & Evaluation */}
             <div className="flex items-center gap-2.5">
-              <button
-                onClick={handleRunCode}
-                disabled={isRunningCode}
-                className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-all shadow-sm"
-                title="Run test cases (Ctrl + Enter)"
-              >
-                <Play className="w-3.5 h-3.5 fill-emerald-400" />
-                <span>Run Tests</span>
-              </button>
+              {!isCurrentMCQ && (
+                <button
+                  onClick={handleRunCode}
+                  disabled={isRunningCode}
+                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-all shadow-sm"
+                  title="Run test cases (Ctrl + Enter)"
+                >
+                  <Play className="w-3.5 h-3.5 fill-emerald-400" />
+                  <span>Run Tests</span>
+                </button>
+              )}
 
               <button
                 onClick={() => {

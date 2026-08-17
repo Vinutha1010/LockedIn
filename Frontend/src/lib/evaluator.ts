@@ -11,6 +11,80 @@ export function evaluateCandidateSubmission(
 ): AnswerFeedback {
   const code = (answer?.code || '').trim()
   const speech = (answer?.speechText || '').trim()
+  const isMCQ = question.type === 'mcq' || question.roundType === 'aptitude' || Boolean(question.options && question.options.length > 0)
+
+  // 1. Case: MCQ Question Evaluation
+  if (isMCQ) {
+    const selectedOption = (answer?.selectedOption || '').trim()
+    const notes = (answer?.code || '').trim()
+    const speech = (answer?.speechText || '').trim()
+
+    if (!selectedOption && !notes && !speech) {
+      return {
+        questionId: question.id,
+        overallScore: 0,
+        technicalScore: 0,
+        communicationScore: 0,
+        problemSolvingScore: 0,
+        codeQualityScore: 0,
+        strengths: ['Question viewed in interview room.'],
+        weaknesses: ['No answer option was selected for this multiple-choice question.'],
+        suggestions: ['Select one of the 4 options (A, B, C, D) before submitting.'],
+        modelAnswerSummary: question.explanation || `Correct option: ${question.correctAnswer}`,
+        evaluatedAt: new Date().toISOString(),
+        status: 'completed',
+      }
+    }
+
+    const getLetter = (str: string) => {
+      const match = str.match(/^([A-D])\b/i) || str.match(/^([A-D])\)/i)
+      return match ? match[1].toUpperCase() : str.trim().toUpperCase()
+    }
+
+    const candidateLetter = getLetter(selectedOption)
+    const correctLetter = getLetter(question.correctAnswer || '')
+    const isCorrect = Boolean(candidateLetter && correctLetter && candidateLetter === correctLetter)
+
+    const strengths: string[] = []
+    const weaknesses: string[] = []
+    const suggestions: string[] = []
+
+    if (isCorrect) {
+      strengths.push(`Selected the correct option: ${question.correctAnswer || selectedOption}`)
+      strengths.push('Demonstrated accurate mathematical calculation and logical deduction.')
+      if (notes.length > 20 || speech.length > 20) {
+        strengths.push('Well-structured reasoning documented in the scratchpad notes.')
+      }
+      suggestions.push('Keep practicing similar problem variations to maximize speed under timed assessment conditions.')
+    } else {
+      weaknesses.push(`Selected option "${selectedOption}" is incorrect. The correct answer is "${question.correctAnswer}".`)
+      if (!notes && !speech) {
+        weaknesses.push('No intermediate scratchpad calculation or verbal explanation was recorded.')
+      }
+      suggestions.push('Review the step-by-step mathematical explanation provided in the breakdown below.')
+      suggestions.push('Break the problem into formula identification, variable substitution, and unit verification.')
+    }
+
+    const score = isCorrect ? 100 : 35
+    const commScore = speech.length > 20 || notes.length > 20 ? (isCorrect ? 95 : 70) : 60
+
+    return {
+      questionId: question.id,
+      overallScore: isCorrect ? 100 : 38,
+      technicalScore: score,
+      communicationScore: commScore,
+      problemSolvingScore: score,
+      codeQualityScore: score,
+      strengths,
+      weaknesses,
+      suggestions,
+      modelAnswerSummary: question.explanation || `Correct Answer: ${question.correctAnswer}`,
+      evaluatedAt: new Date().toISOString(),
+      status: 'completed',
+    }
+  }
+
+  // 2. Case: Unanswered or untouched starter code for coding questions
   const isUntouchedStarter =
     !code ||
     code === (question.starterCode || '').trim() ||
@@ -18,7 +92,6 @@ export function evaluateCandidateSubmission(
 
   const hasAnyInput = (!isUntouchedStarter && code.length > 20) || speech.length > 15
 
-  // 1. Case: Unanswered or untouched starter code
   if (!hasAnyInput) {
     return {
       questionId: question.id,

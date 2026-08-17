@@ -25,6 +25,10 @@ model Question {
   roundType              String           // dsa, system-design, behavioral, cs-fundamentals, aptitude
   difficulty             String           // Easy, Medium, Hard
   category               String
+  type                   String?          // coding, mcq
+  options                String?          // JSON array string of options
+  correctAnswer          String?
+  explanation            String?
   tags                   String?          // JSON array string
   companyTags            String?          // JSON array string
   frequency              String?          // High, Medium, Trending

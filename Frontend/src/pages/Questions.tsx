@@ -20,6 +20,8 @@ import {
   Check,
   Zap,
   Award,
+  HelpCircle,
+  Shapes,
 } from 'lucide-react'
 import { QUESTION_BANK } from '@/data/questions'
 import { useInterviewStore } from '@/store/useInterviewStore'
@@ -39,6 +41,7 @@ export const Questions: FC = () => {
 
   // Preview drawer state
   const [previewQuestion, setPreviewQuestion] = useState<Question | null>(null)
+  const [showPreviewSolution, setShowPreviewSolution] = useState(false)
   const [copiedCode, setCopiedCode] = useState(false)
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([])
 
@@ -138,6 +141,8 @@ export const Questions: FC = () => {
         return <Cpu className="w-3.5 h-3.5 text-indigo-400" />
       case 'coding':
         return <Layers className="w-3.5 h-3.5 text-emerald-400" />
+      case 'pattern-programming':
+        return <Shapes className="w-3.5 h-3.5 text-pink-400" />
       case 'aptitude':
         return <Users className="w-3.5 h-3.5 text-amber-400" />
       default:
@@ -256,6 +261,7 @@ export const Questions: FC = () => {
               { id: 'dsa', label: 'Data Structures & Algorithms', icon: <Code2 className="w-3.5 h-3.5" /> },
               { id: 'cs-fundamentals', label: 'CS Fundamentals (OS/DBMS/Net/OOP)', icon: <Cpu className="w-3.5 h-3.5" /> },
               { id: 'coding', label: 'Practical Coding', icon: <Layers className="w-3.5 h-3.5" /> },
+              { id: 'pattern-programming', label: 'Pattern Programming', icon: <Shapes className="w-3.5 h-3.5 text-pink-400" /> },
               { id: 'aptitude', label: 'Aptitude & Logic', icon: <Users className="w-3.5 h-3.5" /> },
             ].map((tab) => {
               const isSelected = selectedTrack === tab.id
@@ -277,25 +283,12 @@ export const Questions: FC = () => {
             })}
           </div>
 
-          {/* Secondary Filter Badges: Difficulty, Companies, Tags */}
+          {/* Secondary Filter Badges: Companies & Topics */}
           <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-1.5 text-xs text-slate-400 shrink-0 mr-1">
               <Filter className="w-3.5 h-3.5 text-cyan-400" />
               <span className="font-semibold">Filters:</span>
             </div>
-
-            {/* Difficulty select */}
-            <select
-              value={selectedDifficulty}
-              onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty | 'all')}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-950/80 border border-slate-700/80 text-xs text-slate-300 focus:outline-none focus:border-cyan-500"
-            >
-              <option value="all">All Seniorities</option>
-              <option value="junior">Junior / Entry</option>
-              <option value="mid">Mid-Level</option>
-              <option value="senior">Senior</option>
-              <option value="lead">Staff / Principal</option>
-            </select>
 
             {/* Company select */}
             <select
@@ -424,6 +417,19 @@ export const Questions: FC = () => {
                         >
                           {q.difficulty}
                         </span>
+
+                        {q.type === 'mcq' || q.roundType === 'aptitude' || (q.options && q.options.length > 0) ? (
+                          <span className="px-2 py-0.5 rounded-md bg-amber-950/60 border border-amber-500/40 text-amber-300 text-[10px] font-bold flex items-center gap-1">
+                            <HelpCircle className="w-3 h-3 text-amber-400" />
+                            MCQ
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-md bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-[10px] font-bold flex items-center gap-1">
+                            <Code2 className="w-3 h-3 text-cyan-400" />
+                            Executable
+                          </span>
+                        )}
+
                         {q.frequency === 'High' && (
                           <span className="px-2 py-0.5 rounded-md bg-amber-950/60 border border-amber-500/30 text-amber-300 text-[10px] font-medium flex items-center gap-0.5">
                             🔥 High Freq
@@ -580,6 +586,11 @@ export const Questions: FC = () => {
                   <span className="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs capitalize font-medium">
                     {previewQuestion.roundType.replace('-', ' ')}
                   </span>
+                  {previewQuestion.options && previewQuestion.options.length > 0 && (
+                    <span className="px-2 py-0.5 rounded-md bg-amber-950/60 border border-amber-500/40 text-amber-300 text-[10px] font-bold">
+                      MCQ Format
+                    </span>
+                  )}
                   <span className="text-xs text-slate-400 flex items-center gap-1">
                     <Clock className="w-3 h-3 text-cyan-400" /> ~{previewQuestion.timeLimitMinutes || 15}m limit
                   </span>
@@ -589,7 +600,10 @@ export const Questions: FC = () => {
               </div>
 
               <button
-                onClick={() => setPreviewQuestion(null)}
+                onClick={() => {
+                  setPreviewQuestion(null)
+                  setShowPreviewSolution(false)
+                }}
                 className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0"
               >
                 <X className="w-5 h-5" />
@@ -601,15 +615,67 @@ export const Questions: FC = () => {
               {/* Description */}
               <div className="space-y-2">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Problem Statement & System Requirements
+                  Problem Statement
                 </h4>
                 <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-slate-200 leading-relaxed whitespace-pre-line">
                   {previewQuestion.description}
                 </div>
               </div>
 
-              {/* Starter Code Preview */}
-              {previewQuestion.starterCode && (
+              {/* MCQ Options Display */}
+              {previewQuestion.options && previewQuestion.options.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
+                    Multiple Choice Options
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {previewQuestion.options.map((opt, i) => (
+                      <div
+                        key={i}
+                        className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-200 font-medium flex items-center gap-2.5"
+                      >
+                        <span className="w-6 h-6 rounded-md bg-slate-800 text-cyan-300 font-bold flex items-center justify-center text-xs shrink-0">
+                          {opt.charAt(0)}
+                        </span>
+                        <span className="text-xs">{opt.replace(/^[A-D]\)\s*/i, '')}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Toggle Solution */}
+                  <div className="pt-2">
+                    <button
+                      onClick={() => setShowPreviewSolution(!showPreviewSolution)}
+                      className="px-4 py-2 rounded-xl bg-indigo-950/60 border border-indigo-500/40 text-indigo-300 hover:text-indigo-200 text-xs font-semibold flex items-center gap-2 transition-colors"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>{showPreviewSolution ? 'Hide Solution' : 'Reveal Correct Option & Derivation'}</span>
+                    </button>
+                  </div>
+
+                  {showPreviewSolution && (
+                    <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/40 space-y-2.5 animate-in fade-in">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs uppercase tracking-wider text-indigo-300">
+                          Correct Option:
+                        </span>
+                        <span className="px-2.5 py-0.5 rounded bg-emerald-950 border border-emerald-500/50 text-emerald-300 font-bold text-xs">
+                          {previewQuestion.correctAnswer}
+                        </span>
+                      </div>
+                      {previewQuestion.explanation && (
+                        <div className="text-xs text-slate-200 whitespace-pre-line font-mono bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                          {previewQuestion.explanation}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Starter Code Preview for Coding questions */}
+              {previewQuestion.starterCode && (!previewQuestion.options || previewQuestion.options.length === 0) && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
@@ -631,7 +697,7 @@ export const Questions: FC = () => {
               )}
 
               {/* Complexity Constraints */}
-              {previewQuestion.expectedComplexity && (
+              {previewQuestion.expectedComplexity && (!previewQuestion.options || previewQuestion.options.length === 0) && (
                 <div className="p-3.5 rounded-2xl bg-indigo-950/30 border border-indigo-500/30 flex items-center justify-between">
                   <span className="font-semibold text-indigo-300">Target Complexity:</span>
                   <div className="flex items-center gap-3 font-mono text-[11px]">

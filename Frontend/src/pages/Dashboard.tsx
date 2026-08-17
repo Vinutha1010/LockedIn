@@ -14,6 +14,7 @@ import {
   Clock,
   BookOpen,
   BarChart3,
+  Shapes,
 } from 'lucide-react'
 import { useInterviewStore } from '@/store/useInterviewStore'
 import type { RoundType } from '@/types'
@@ -60,6 +61,14 @@ export const Dashboard: FC = () => {
       description: 'Sliding window, string manipulation, intervals, and clean code implementation.',
       tag: 'Hands-on Coding',
       color: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/40 text-emerald-400',
+    },
+    {
+      id: 'pattern-programming',
+      title: 'Pattern Programming & Logic',
+      icon: <Shapes className="w-5 h-5" />,
+      description: 'Diamond, Pyramid, Pascal Triangle, Spiral Matrix, Floyd, and Checkerboard patterns.',
+      tag: 'Logic & Loops',
+      color: 'from-pink-500/20 to-rose-500/10 border-pink-500/40 text-pink-400',
     },
     {
       id: 'aptitude',

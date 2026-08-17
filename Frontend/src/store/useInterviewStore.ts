@@ -437,6 +437,7 @@ export const useInterviewStore = create<InterviewSessionState>((set, get) => ({
       questionId: currentQ.id,
       code: answerPayload?.code ?? activeCode,
       language: answerPayload?.language ?? activeLanguage,
+      selectedOption: answerPayload?.selectedOption,
       speechText: answerPayload?.speechText,
       submittedAt: new Date().toISOString(),
     }

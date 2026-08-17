@@ -247,14 +247,24 @@ function stripTypeScriptTypes(tsCode: string): string {
   return tsCode
     .replace(/import\s+type\s+[\s\S]*?;/g, '')
     .replace(/(?:export\s+)?(?:interface|type)\s+[A-Za-z0-9_]+\s*(?:<[^>]*>)?\s*(?:=\s*)?\{[\s\S]*?\};?/g, '')
-    .replace(/\)\s*:\s*[A-Za-z0-9_<>[\]|,\s]+\s*\{/g, ') {')
+    // Type assertions
+    .replace(/\s+as\s+(?:const|any|[A-Za-z0-9_<>[\]|\s]+)(?=[;,)\]}])/g, '')
+    // Non-null assertion e.g. x! or map.get(k)! before any punctuation or operator
+    .replace(/([a-zA-Z0-9_\)\]])!\s*(?=[<>=!+\-*/&|;,)\]}.])/g, '$1')
+    .replace(/([a-zA-Z0-9_\)\]])!\s*$/gm, '$1')
+    // Generics on instantiation e.g. new Map<...>() or new Set<...>()
     .replace(/new\s+Map<[^>]*>\(\)/g, 'new Map()')
     .replace(/new\s+Set<[^>]*>\(\)/g, 'new Set()')
-    .replace(/(const|let|var)\s+([A-Za-z0-9_]+)\s*:\s*[A-Za-z0-9_<>[\]|,\s]+\s*=/g, '$1 $2 =')
-    .replace(/\(([A-Za-z0-9_]+)\s*:\s*[A-Za-z0-9_<>[\]|,\s]+(,\s*([A-Za-z0-9_]+)\s*:\s*[A-Za-z0-9_<>[\]|,\s]+)*\)/g, (match) => {
-      return match.replace(/:\s*[A-Za-z0-9_<>[\]|,\s]+/g, '')
-    })
-    .replace(/!\s*([;,)\]}])/g, '$1')
+    .replace(/<[A-Za-z0-9_,\s<>\[\]|]+>(?=\s*\()/g, '')
+    // Function return type annotations e.g. function fn(...): ReturnType {
+    .replace(/\)\s*:\s*(?:\{[^}]*\}|\([^)]*\)(?:\[\])*|[A-Za-z0-9_<>[\]|\s,?:()]+)\s*\{/g, ') {')
+    // Variable declarations (single or comma-separated) e.g. const a: number[] = [], b: number[] = []
+    .replace(/:\s*(?:Record<[^>]*>|\{[^}]*\}|\[[^\]]*\](?:\[\])*|\([^)]*\)(?:\[\])*|[A-Za-z0-9_<>[\]|\s?]+)(?=\s*=)/g, '')
+    // Function parameter type annotations e.g. (a: Type, b: Type)
+    .replace(/(\(\s*[A-Za-z0-9_]+)\s*:\s*(?:\[[^\]]*\](?:\[\])*|\([^)]*\)(?:\[\])*|\{[^}]*\}|[A-Za-z0-9_<>[\]|\s?]+)(?=\s*[,)])/g, '$1')
+    .replace(/(,\s*[A-Za-z0-9_]+)\s*:\s*(?:\[[^\]]*\](?:\[\])*|\([^)]*\)(?:\[\])*|\{[^}]*\}|[A-Za-z0-9_<>[\]|\s?]+)(?=\s*[,)])/g, '$1')
+    .replace(/(,\s*[A-Za-z0-9_]+)\s*:\s*(?:\[[^\]]*\](?:\[\])*|\([^)]*\)(?:\[\])*|\{[^}]*\}|[A-Za-z0-9_<>[\]|\s?]+)(?=\s*[,)])/g, '$1')
+    .replace(/(,\s*[A-Za-z0-9_]+)\s*:\s*(?:\[[^\]]*\](?:\[\])*|\([^)]*\)(?:\[\])*|\{[^}]*\}|[A-Za-z0-9_<>[\]|\s?]+)(?=\s*[,)])/g, '$1')
 }
 
 /**
@@ -262,6 +272,10 @@ function stripTypeScriptTypes(tsCode: string): string {
  */
 function deepEqual(a: any, b: any): boolean {
   if (a === b) return true
+  if (typeof a === 'string' && typeof b === 'string') {
+    if (a.trim() === b.trim()) return true
+    if (a.replace(/\r\n/g, '\n').trim() === b.replace(/\r\n/g, '\n').trim()) return true
+  }
   if (a == null || b == null) return false
 
   if (Array.isArray(a) && Array.isArray(b)) {
