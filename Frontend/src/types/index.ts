@@ -48,6 +48,7 @@ export interface Question {
   acceptanceRate?: string
   hints?: string[]
   starterCode?: string
+  solutionCode?: string
   languageStarterCodes?: Record<string, string>
   functionName?: string
   testCases?: TestCase[]

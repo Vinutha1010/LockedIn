@@ -30,7 +30,7 @@ export const QUESTION_BANK: Question[] = [
       "Maintain maxSoFar and currentMax while iterating.",
       "currentMax = Math.max(num, currentMax + num)"
     ],
-    "starterCode": "function maxSubArray(nums: number[]): number {\n  let maxSoFar = nums[0], curr = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    curr = Math.max(nums[i], curr + nums[i]);\n    maxSoFar = Math.max(maxSoFar, curr);\n  }\n  return maxSoFar;\n}",
+    "starterCode": "function maxSubArray(nums: number[]): number {\n  // Write your solution here\n  \n}",
     "functionName": "maxSubArray",
     "testCases": [
       {
@@ -55,7 +55,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Kadane dynamic recurrence",
       "O(N) time and O(1) space"
-    ]
+    ],
+    "solutionCode": "function maxSubArray(nums: number[]): number {\n  let maxSoFar = nums[0], curr = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    curr = Math.max(nums[i], curr + nums[i]);\n    maxSoFar = Math.max(maxSoFar, curr);\n  }\n  return maxSoFar;\n}"
   },
   {
     "id": "dsa-rotate-array",
@@ -85,7 +86,7 @@ export const QUESTION_BANK: Question[] = [
       "k = k % nums.length",
       "Reverse array segments"
     ],
-    "starterCode": "function rotate(nums: number[], k: number): number[] {\n  k = k % nums.length;\n  return nums.slice(-k).concat(nums.slice(0, nums.length - k));\n}",
+    "starterCode": "function rotate(nums: number[], k: number): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "rotate",
     "testCases": [
       {
@@ -110,7 +111,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Handles k > length",
       "Correct rotation output"
-    ]
+    ],
+    "solutionCode": "function rotate(nums: number[], k: number): number[] {\n  k = k % nums.length;\n  return nums.slice(-k).concat(nums.slice(0, nums.length - k));\n}"
   },
   {
     "id": "dsa-merge-intervals",
@@ -140,7 +142,7 @@ export const QUESTION_BANK: Question[] = [
       "Sort by start time.",
       "Merge when curr.start <= prev.end."
     ],
-    "starterCode": "function merge(intervals: number[][]): number[][] {\n  if (!intervals.length) return [];\n  intervals.sort((a, b) => a[0] - b[0]);\n  const merged = [intervals[0]];\n  for (let i = 1; i < intervals.length; i++) {\n    const last = merged[merged.length - 1];\n    if (intervals[i][0] <= last[1]) last[1] = Math.max(last[1], intervals[i][1]);\n    else merged.push(intervals[i]);\n  }\n  return merged;\n}",
+    "starterCode": "function merge(intervals: number[][]): number[][] {\n  // Write your solution here\n  \n}",
     "functionName": "merge",
     "testCases": [
       {
@@ -165,7 +167,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Sorts by start time",
       "Correct interval bounds"
-    ]
+    ],
+    "solutionCode": "function merge(intervals: number[][]): number[][] {\n  if (!intervals.length) return [];\n  intervals.sort((a, b) => a[0] - b[0]);\n  const merged = [intervals[0]];\n  for (let i = 1; i < intervals.length; i++) {\n    const last = merged[merged.length - 1];\n    if (intervals[i][0] <= last[1]) last[1] = Math.max(last[1], intervals[i][1]);\n    else merged.push(intervals[i]);\n  }\n  return merged;\n}"
   },
   {
     "id": "dsa-find-duplicate",
@@ -194,7 +197,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use Floyd's Tortoise and Hare cycle detection."
     ],
-    "starterCode": "function findDuplicate(nums: number[]): number {\n  let slow = nums[0], fast = nums[0];\n  do { slow = nums[slow]; fast = nums[nums[fast]]; } while (slow !== fast);\n  slow = nums[0];\n  while (slow !== fast) { slow = nums[slow]; fast = nums[fast]; }\n  return slow;\n}",
+    "starterCode": "function findDuplicate(nums: number[]): number {\n  // Write your solution here\n  \n}",
     "functionName": "findDuplicate",
     "testCases": [
       {
@@ -219,7 +222,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Floyd algorithm",
       "O(1) space"
-    ]
+    ],
+    "solutionCode": "function findDuplicate(nums: number[]): number {\n  let slow = nums[0], fast = nums[0];\n  do { slow = nums[slow]; fast = nums[nums[fast]]; } while (slow !== fast);\n  slow = nums[0];\n  while (slow !== fast) { slow = nums[slow]; fast = nums[fast]; }\n  return slow;\n}"
   },
   {
     "id": "dsa-max-product-subarray",
@@ -247,7 +251,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Track both maxProd and minProd at each position."
     ],
-    "starterCode": "function maxProduct(nums: number[]): number {\n  let maxP = nums[0], minP = nums[0], res = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    const num = nums[i];\n    if (num < 0) { const tmp = maxP; maxP = minP; minP = tmp; }\n    maxP = Math.max(num, maxP * num);\n    minP = Math.min(num, minP * num);\n    res = Math.max(res, maxP);\n  }\n  return res;\n}",
+    "starterCode": "function maxProduct(nums: number[]): number {\n  // Write your solution here\n  \n}",
     "functionName": "maxProduct",
     "testCases": [
       {
@@ -272,7 +276,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Double min/max tracking",
       "Negative number swap"
-    ]
+    ],
+    "solutionCode": "function maxProduct(nums: number[]): number {\n  let maxP = nums[0], minP = nums[0], res = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    const num = nums[i];\n    if (num < 0) { const tmp = maxP; maxP = minP; minP = tmp; }\n    maxP = Math.max(num, maxP * num);\n    minP = Math.min(num, minP * num);\n    res = Math.max(res, maxP);\n  }\n  return res;\n}"
   },
   {
     "id": "dsa-missing-and-repeating",
@@ -301,7 +306,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use frequency count or mathematical sum differences."
     ],
-    "starterCode": "function findMissingAndRepeating(arr: number[], n: number): number[] {\n  const count = new Map<number, number>();\n  for (const x of arr) count.set(x, (count.get(x) || 0) + 1);\n  let rep = -1, mis = -1;\n  for (let i = 1; i <= n; i++) {\n    if (count.get(i) === 2) rep = i;\n    else if (!count.has(i)) mis = i;\n  }\n  return [rep, mis];\n}",
+    "starterCode": "function findMissingAndRepeating(arr: number[], n: number): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "findMissingAndRepeating",
     "testCases": [
       {
@@ -326,7 +331,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Identifies repeating and missing",
       "O(N) time"
-    ]
+    ],
+    "solutionCode": "function findMissingAndRepeating(arr: number[], n: number): number[] {\n  const count = new Map<number, number>();\n  for (const x of arr) count.set(x, (count.get(x) || 0) + 1);\n  let rep = -1, mis = -1;\n  for (let i = 1; i <= n; i++) {\n    if (count.get(i) === 2) rep = i;\n    else if (!count.has(i)) mis = i;\n  }\n  return [rep, mis];\n}"
   },
   {
     "id": "dsa-subarray-sum",
@@ -355,7 +361,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use sliding window: expand right and shrink left."
     ],
-    "starterCode": "function subarraySum(arr: number[], targetSum: number): number[] {\n  let l = 0, curr = 0;\n  for (let r = 0; r < arr.length; r++) {\n    curr += arr[r];\n    while (curr > targetSum && l < r) curr -= arr[l++];\n    if (curr === targetSum) return [l + 1, r + 1];\n  }\n  return [-1];\n}",
+    "starterCode": "function subarraySum(arr: number[], targetSum: number): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "subarraySum",
     "testCases": [
       {
@@ -380,7 +386,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Sliding window logic",
       "1-based index return"
-    ]
+    ],
+    "solutionCode": "function subarraySum(arr: number[], targetSum: number): number[] {\n  let l = 0, curr = 0;\n  for (let r = 0; r < arr.length; r++) {\n    curr += arr[r];\n    while (curr > targetSum && l < r) curr -= arr[l++];\n    if (curr === targetSum) return [l + 1, r + 1];\n  }\n  return [-1];\n}"
   },
   {
     "id": "dsa-longest-consecutive",
@@ -408,7 +415,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Store numbers in Set, start counting only from streak roots (num - 1 not in set)."
     ],
-    "starterCode": "function longestConsecutive(nums: number[]): number {\n  if (!nums.length) return 0;\n  const set = new Set(nums);\n  let maxLen = 0;\n  for (const num of set) {\n    if (!set.has(num - 1)) {\n      let curr = num, streak = 1;\n      while (set.has(curr + 1)) { curr++; streak++; }\n      maxLen = Math.max(maxLen, streak);\n    }\n  }\n  return maxLen;\n}",
+    "starterCode": "function longestConsecutive(nums: number[]): number {\n  // Write your solution here\n  \n}",
     "functionName": "longestConsecutive",
     "testCases": [
       {
@@ -433,7 +440,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Set lookup O(1)",
       "Streak start optimization"
-    ]
+    ],
+    "solutionCode": "function longestConsecutive(nums: number[]): number {\n  if (!nums.length) return 0;\n  const set = new Set(nums);\n  let maxLen = 0;\n  for (const num of set) {\n    if (!set.has(num - 1)) {\n      let curr = num, streak = 1;\n      while (set.has(curr + 1)) { curr++; streak++; }\n      maxLen = Math.max(maxLen, streak);\n    }\n  }\n  return maxLen;\n}"
   },
   {
     "id": "dsa-trapping-rain-water",
@@ -463,7 +471,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Two pointers left and right, maintain leftMax and rightMax."
     ],
-    "starterCode": "function trap(height: number[]): number {\n  let l = 0, r = height.length - 1, lMax = 0, rMax = 0, water = 0;\n  while (l < r) {\n    if (height[l] < height[r]) {\n      if (height[l] >= lMax) lMax = height[l];\n      else water += lMax - height[l];\n      l++;\n    } else {\n      if (height[r] >= rMax) rMax = height[r];\n      else water += rMax - height[r];\n      r--;\n    }\n  }\n  return water;\n}",
+    "starterCode": "function trap(height: number[]): number {\n  // Write your solution here\n  \n}",
     "functionName": "trap",
     "testCases": [
       {
@@ -488,7 +496,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Two pointer linear scan",
       "O(1) space"
-    ]
+    ],
+    "solutionCode": "function trap(height: number[]): number {\n  let l = 0, r = height.length - 1, lMax = 0, rMax = 0, water = 0;\n  while (l < r) {\n    if (height[l] < height[r]) {\n      if (height[l] >= lMax) lMax = height[l];\n      else water += lMax - height[l];\n      l++;\n    } else {\n      if (height[r] >= rMax) rMax = height[r];\n      else water += rMax - height[r];\n      r--;\n    }\n  }\n  return water;\n}"
   },
   {
     "id": "dsa-next-permutation",
@@ -517,7 +526,7 @@ export const QUESTION_BANK: Question[] = [
       "Find rightmost dip index i where nums[i] < nums[i + 1].",
       "Swap with next greater and reverse suffix."
     ],
-    "starterCode": "function nextPermutation(nums: number[]): number[] {\n  let i = nums.length - 2;\n  while (i >= 0 && nums[i] >= nums[i + 1]) i--;\n  if (i >= 0) {\n    let j = nums.length - 1;\n    while (nums[j] <= nums[i]) j--;\n    [nums[i], nums[j]] = [nums[j], nums[i]];\n  }\n  let l = i + 1, r = nums.length - 1;\n  while (l < r) { [nums[l], nums[r]] = [nums[r], nums[l]]; l++; r--; }\n  return nums;\n}",
+    "starterCode": "function nextPermutation(nums: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "nextPermutation",
     "testCases": [
       {
@@ -542,7 +551,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Pivot finding logic",
       "Suffix reversal"
-    ]
+    ],
+    "solutionCode": "function nextPermutation(nums: number[]): number[] {\n  let i = nums.length - 2;\n  while (i >= 0 && nums[i] >= nums[i + 1]) i--;\n  if (i >= 0) {\n    let j = nums.length - 1;\n    while (nums[j] <= nums[i]) j--;\n    [nums[i], nums[j]] = [nums[j], nums[i]];\n  }\n  let l = i + 1, r = nums.length - 1;\n  while (l < r) { [nums[l], nums[r]] = [nums[r], nums[l]]; l++; r--; }\n  return nums;\n}"
   },
   {
     "id": "str-longest-palindrome",
@@ -570,7 +580,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Expand around odd and even length palindrome centers."
     ],
-    "starterCode": "function longestPalindrome(s: string): string {\n  if (!s) return \"\";\n  let start = 0, end = 0;\n  function exp(l: number, r: number) {\n    while (l >= 0 && r < s.length && s[l] === s[r]) { l--; r++; }\n    return r - l - 1;\n  }\n  for (let i = 0; i < s.length; i++) {\n    const len = Math.max(exp(i, i), exp(i, i + 1));\n    if (len > end - start + 1) {\n      start = i - Math.floor((len - 1) / 2);\n      end = i + Math.floor(len / 2);\n    }\n  }\n  return s.substring(start, end + 1);\n}",
+    "starterCode": "function longestPalindrome(s: string): string {\n  // Write your solution here\n  \n}",
     "functionName": "longestPalindrome",
     "testCases": [
       {
@@ -595,7 +605,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Center expansion",
       "Correct start/end indexing"
-    ]
+    ],
+    "solutionCode": "function longestPalindrome(s: string): string {\n  if (!s) return \"\";\n  let start = 0, end = 0;\n  function exp(l: number, r: number) {\n    while (l >= 0 && r < s.length && s[l] === s[r]) { l--; r++; }\n    return r - l - 1;\n  }\n  for (let i = 0; i < s.length; i++) {\n    const len = Math.max(exp(i, i), exp(i, i + 1));\n    if (len > end - start + 1) {\n      start = i - Math.floor((len - 1) / 2);\n      end = i + Math.floor(len / 2);\n    }\n  }\n  return s.substring(start, end + 1);\n}"
   },
   {
     "id": "str-reverse-words",
@@ -622,7 +633,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Trim and split by whitespace regex."
     ],
-    "starterCode": "function reverseWords(s: string): string {\n  return s.trim().split(/\\s+/).reverse().join(' ');\n}",
+    "starterCode": "function reverseWords(s: string): string {\n  // Write your solution here\n  \n}",
     "functionName": "reverseWords",
     "testCases": [
       {
@@ -647,7 +658,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Handles leading/trailing whitespace",
       "Reverses word order"
-    ]
+    ],
+    "solutionCode": "function reverseWords(s: string): string {\n  return s.trim().split(/\\s+/).reverse().join(' ');\n}"
   },
   {
     "id": "str-longest-common-prefix",
@@ -673,7 +685,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Compare characters iteratively."
     ],
-    "starterCode": "function longestCommonPrefix(strs: string[]): string {\n  if (!strs.length) return \"\";\n  let p = strs[0];\n  for (let i = 1; i < strs.length; i++) {\n    while (strs[i].indexOf(p) !== 0) {\n      p = p.substring(0, p.length - 1);\n      if (!p) return \"\";\n    }\n  }\n  return p;\n}",
+    "starterCode": "function longestCommonPrefix(strs: string[]): string {\n  // Write your solution here\n  \n}",
     "functionName": "longestCommonPrefix",
     "testCases": [
       {
@@ -698,7 +710,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Scanning logic",
       "Handles empty prefix"
-    ]
+    ],
+    "solutionCode": "function longestCommonPrefix(strs: string[]): string {\n  if (!strs.length) return \"\";\n  let p = strs[0];\n  for (let i = 1; i < strs.length; i++) {\n    while (strs[i].indexOf(p) !== 0) {\n      p = p.substring(0, p.length - 1);\n      if (!p) return \"\";\n    }\n  }\n  return p;\n}"
   },
   {
     "id": "str-group-anagrams",
@@ -726,7 +739,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use sorted characters as Map key."
     ],
-    "starterCode": "function groupAnagrams(strs: string[]): string[][] {\n  const map = new Map<string, string[]>();\n  for (const s of strs) {\n    const k = s.split('').sort().join('');\n    if (!map.has(k)) map.set(k, []);\n    map.get(k)!.push(s);\n  }\n  return Array.from(map.values());\n}",
+    "starterCode": "function groupAnagrams(strs: string[]): string[][] {\n  // Write your solution here\n  \n}",
     "functionName": "groupAnagrams",
     "testCases": [
       {
@@ -751,7 +764,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Map-based grouping",
       "Sort key generation"
-    ]
+    ],
+    "solutionCode": "function groupAnagrams(strs: string[]): string[][] {\n  const map = new Map<string, string[]>();\n  for (const s of strs) {\n    const k = s.split('').sort().join('');\n    if (!map.has(k)) map.set(k, []);\n    map.get(k)!.push(s);\n  }\n  return Array.from(map.values());\n}"
   },
   {
     "id": "str-valid-parentheses",
@@ -779,7 +793,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Push expected closing brackets onto stack."
     ],
-    "starterCode": "function isValid(s: string): boolean {\n  const stack: string[] = [];\n  const map: Record<string, string> = { ')': '(', '}': '{', ']': '[' };\n  for (const ch of s) {\n    if (ch === '(' || ch === '{' || ch === '[') stack.push(ch);\n    else if (stack.pop() !== map[ch]) return false;\n  }\n  return stack.length === 0;\n}",
+    "starterCode": "function isValid(s: string): boolean {\n  // Write your solution here\n  \n}",
     "functionName": "isValid",
     "testCases": [
       {
@@ -804,7 +818,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Stack LIFO matching",
       "Empty stack verification"
-    ]
+    ],
+    "solutionCode": "function isValid(s: string): boolean {\n  const stack: string[] = [];\n  const map: Record<string, string> = { ')': '(', '}': '{', ']': '[' };\n  for (const ch of s) {\n    if (ch === '(' || ch === '{' || ch === '[') stack.push(ch);\n    else if (stack.pop() !== map[ch]) return false;\n  }\n  return stack.length === 0;\n}"
   },
   {
     "id": "str-implement-atoi",
@@ -831,7 +846,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Trim whitespace, handle signs, clamp in 32-bit."
     ],
-    "starterCode": "function myAtoi(s: string): number {\n  s = s.trim();\n  if (!s) return 0;\n  let sign = 1, i = 0;\n  if (s[0] === '+' || s[0] === '-') { sign = s[0] === '-' ? -1 : 1; i = 1; }\n  let res = 0;\n  while (i < s.length && s[i] >= '0' && s[i] <= '9') {\n    res = res * 10 + (s.charCodeAt(i) - 48);\n    i++;\n  }\n  res *= sign;\n  return Math.max(-2147483648, Math.min(2147483647, res));\n}",
+    "starterCode": "function myAtoi(s: string): number {\n  // Write your solution here\n  \n}",
     "functionName": "myAtoi",
     "testCases": [
       {
@@ -856,7 +871,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Sign parsing",
       "32-bit clamping"
-    ]
+    ],
+    "solutionCode": "function myAtoi(s: string): number {\n  s = s.trim();\n  if (!s) return 0;\n  let sign = 1, i = 0;\n  if (s[0] === '+' || s[0] === '-') { sign = s[0] === '-' ? -1 : 1; i = 1; }\n  let res = 0;\n  while (i < s.length && s[i] >= '0' && s[i] <= '9') {\n    res = res * 10 + (s.charCodeAt(i) - 48);\n    i++;\n  }\n  res *= sign;\n  return Math.max(-2147483648, Math.min(2147483647, res));\n}"
   },
   {
     "id": "str-string-to-integer",
@@ -883,7 +899,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Iterate over digit characters multiplying previous result by 10."
     ],
-    "starterCode": "function stringToInteger(s: string): number {\n  s = s.trim();\n  let sign = 1, i = 0, num = 0;\n  if (s[0] === '-') { sign = -1; i = 1; } else if (s[0] === '+') { i = 1; }\n  while (i < s.length && s[i] >= '0' && s[i] <= '9') { num = num * 10 + (s.charCodeAt(i) - 48); i++; }\n  return num * sign;\n}",
+    "starterCode": "function stringToInteger(s: string): number {\n  // Write your solution here\n  \n}",
     "functionName": "stringToInteger",
     "testCases": [
       {
@@ -908,7 +924,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Manual parsing",
       "Sign preservation"
-    ]
+    ],
+    "solutionCode": "function stringToInteger(s: string): number {\n  s = s.trim();\n  let sign = 1, i = 0, num = 0;\n  if (s[0] === '-') { sign = -1; i = 1; } else if (s[0] === '+') { i = 1; }\n  while (i < s.length && s[i] >= '0' && s[i] <= '9') { num = num * 10 + (s.charCodeAt(i) - 48); i++; }\n  return num * sign;\n}"
   },
   {
     "id": "str-longest-repeating-subsequence",
@@ -935,7 +952,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "LCS DP table of str with itself with condition i !== j."
     ],
-    "starterCode": "function longestRepeatingSubsequence(str: string): number {\n  const n = str.length;\n  const dp: number[][] = Array.from({ length: n + 1 }, () => new Array(n + 1).fill(0));\n  for (let i = 1; i <= n; i++) {\n    for (let j = 1; j <= n; j++) {\n      if (str[i - 1] === str[j - 1] && i !== j) dp[i][j] = 1 + dp[i - 1][j - 1];\n      else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n    }\n  }\n  return dp[n][n];\n}",
+    "starterCode": "function longestRepeatingSubsequence(str: string): number {\n  // Write your solution here\n  \n}",
     "functionName": "longestRepeatingSubsequence",
     "testCases": [
       {
@@ -960,7 +977,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "DP recurrence",
       "i !== j condition"
-    ]
+    ],
+    "solutionCode": "function longestRepeatingSubsequence(str: string): number {\n  const n = str.length;\n  const dp: number[][] = Array.from({ length: n + 1 }, () => new Array(n + 1).fill(0));\n  for (let i = 1; i <= n; i++) {\n    for (let j = 1; j <= n; j++) {\n      if (str[i - 1] === str[j - 1] && i !== j) dp[i][j] = 1 + dp[i - 1][j - 1];\n      else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n    }\n  }\n  return dp[n][n];\n}"
   },
   {
     "id": "str-kmp-search",
@@ -987,7 +1005,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Construct LPS array first, then match in linear time."
     ],
-    "starterCode": "function strStrKMP(haystack: string, needle: string): number {\n  if (!needle) return 0;\n  const lps = new Array(needle.length).fill(0);\n  let len = 0, i = 1;\n  while (i < needle.length) {\n    if (needle[i] === needle[len]) { len++; lps[i++] = len; }\n    else { if (len !== 0) len = lps[len - 1]; else lps[i++] = 0; }\n  }\n  let h = 0, n = 0;\n  while (h < haystack.length) {\n    if (haystack[h] === needle[n]) { h++; n++; if (n === needle.length) return h - n; }\n    else { if (n !== 0) n = lps[n - 1]; else h++; }\n  }\n  return -1;\n}",
+    "starterCode": "function strStrKMP(haystack: string, needle: string): number {\n  // Write your solution here\n  \n}",
     "functionName": "strStrKMP",
     "testCases": [
       {
@@ -1012,7 +1030,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "LPS array construction",
       "Linear matching"
-    ]
+    ],
+    "solutionCode": "function strStrKMP(haystack: string, needle: string): number {\n  if (!needle) return 0;\n  const lps = new Array(needle.length).fill(0);\n  let len = 0, i = 1;\n  while (i < needle.length) {\n    if (needle[i] === needle[len]) { len++; lps[i++] = len; }\n    else { if (len !== 0) len = lps[len - 1]; else lps[i++] = 0; }\n  }\n  let h = 0, n = 0;\n  while (h < haystack.length) {\n    if (haystack[h] === needle[n]) { h++; n++; if (n === needle.length) return h - n; }\n    else { if (n !== 0) n = lps[n - 1]; else h++; }\n  }\n  return -1;\n}"
   },
   {
     "id": "str-min-window-substring",
@@ -1040,7 +1059,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use sliding window with a character frequency map and matched counter."
     ],
-    "starterCode": "function minWindow(s: string, t: string): string {\n  if (!s || !t || s.length < t.length) return \"\";\n  const map = new Map<string, number>();\n  for (const c of t) map.set(c, (map.get(c) || 0) + 1);\n  let count = map.size, l = 0, minLen = Infinity, minStart = 0;\n  for (let r = 0; r < s.length; r++) {\n    const c = s[r];\n    if (map.has(c)) { map.set(c, map.get(c)! - 1); if (map.get(c) === 0) count--; }\n    while (count === 0) {\n      if (r - l + 1 < minLen) { minLen = r - l + 1; minStart = l; }\n      const lc = s[l];\n      if (map.has(lc)) { map.set(lc, map.get(lc)! + 1); if (map.get(lc)! > 0) count++; }\n      l++;\n    }\n  }\n  return minLen === Infinity ? \"\" : s.substring(minStart, minStart + minLen);\n}",
+    "starterCode": "function minWindow(s: string, t: string): string {\n  // Write your solution here\n  \n}",
     "functionName": "minWindow",
     "testCases": [
       {
@@ -1065,7 +1084,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Sliding window",
       "Frequency map updates"
-    ]
+    ],
+    "solutionCode": "function minWindow(s: string, t: string): string {\n  if (!s || !t || s.length < t.length) return \"\";\n  const map = new Map<string, number>();\n  for (const c of t) map.set(c, (map.get(c) || 0) + 1);\n  let count = map.size, l = 0, minLen = Infinity, minStart = 0;\n  for (let r = 0; r < s.length; r++) {\n    const c = s[r];\n    if (map.has(c)) { map.set(c, map.get(c)! - 1); if (map.get(c) === 0) count--; }\n    while (count === 0) {\n      if (r - l + 1 < minLen) { minLen = r - l + 1; minStart = l; }\n      const lc = s[l];\n      if (map.has(lc)) { map.set(lc, map.get(lc)! + 1); if (map.get(lc)! > 0) count++; }\n      l++;\n    }\n  }\n  return minLen === Infinity ? \"\" : s.substring(minStart, minStart + minLen);\n}"
   },
   {
     "id": "ll-reverse",
@@ -1093,7 +1113,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Maintain prev, curr, next pointers."
     ],
-    "starterCode": "function reverseList(head: number[]): number[] {\n  return head.slice().reverse();\n}",
+    "starterCode": "function reverseList(head: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "reverseList",
     "testCases": [
       {
@@ -1118,7 +1138,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Pointer rewiring",
       "O(1) auxiliary space"
-    ]
+    ],
+    "solutionCode": "function reverseList(head: number[]): number[] {\n  return head.slice().reverse();\n}"
   },
   {
     "id": "ll-detect-loop",
@@ -1145,7 +1166,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use Floyd's cycle-finding algorithm with fast and slow pointers."
     ],
-    "starterCode": "function hasCycle(head: number[], pos: number): boolean {\n  return pos >= 0 && pos < head.length;\n}",
+    "starterCode": "function hasCycle(head: number[], pos: number): boolean {\n  // Write your solution here\n  \n}",
     "functionName": "hasCycle",
     "testCases": [
       {
@@ -1170,7 +1191,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Floyd algorithm",
       "Cycle detection"
-    ]
+    ],
+    "solutionCode": "function hasCycle(head: number[], pos: number): boolean {\n  return pos >= 0 && pos < head.length;\n}"
   },
   {
     "id": "ll-merge-two-sorted",
@@ -1197,7 +1219,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Compare elements from both lists and stitch nodes into a sorted list."
     ],
-    "starterCode": "function mergeTwoLists(l1: number[], l2: number[]): number[] {\n  const res: number[] = [];\n  let i = 0, j = 0;\n  while (i < l1.length && j < l2.length) {\n    if (l1[i] <= l2[j]) res.push(l1[i++]);\n    else res.push(l2[j++]);\n  }\n  while (i < l1.length) res.push(l1[i++]);\n  while (j < l2.length) res.push(l2[j++]);\n  return res;\n}",
+    "starterCode": "function mergeTwoLists(l1: number[], l2: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "mergeTwoLists",
     "testCases": [
       {
@@ -1222,7 +1244,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Linear merge",
       "Sorted order maintained"
-    ]
+    ],
+    "solutionCode": "function mergeTwoLists(l1: number[], l2: number[]): number[] {\n  const res: number[] = [];\n  let i = 0, j = 0;\n  while (i < l1.length && j < l2.length) {\n    if (l1[i] <= l2[j]) res.push(l1[i++]);\n    else res.push(l2[j++]);\n  }\n  while (i < l1.length) res.push(l1[i++]);\n  while (j < l2.length) res.push(l2[j++]);\n  return res;\n}"
   },
   {
     "id": "ll-flatten-multilevel",
@@ -1250,7 +1273,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use recursive DFS to traverse child branches."
     ],
-    "starterCode": "function flatten(head: any[]): number[] {\n  return head.flat(Infinity);\n}",
+    "starterCode": "function flatten(head: any[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "flatten",
     "testCases": [
       {
@@ -1275,7 +1298,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Recursive flattening",
       "Preserves preorder order"
-    ]
+    ],
+    "solutionCode": "function flatten(head: any[]): number[] {\n  return head.flat(Infinity);\n}"
   },
   {
     "id": "ll-intersection-point",
@@ -1303,7 +1327,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Switch pointers to the head of the opposite list upon reaching the end."
     ],
-    "starterCode": "function getIntersectionNode(listA: number[], listB: number[], intersectVal: number): number | null {\n  return intersectVal > 0 ? intersectVal : null;\n}",
+    "starterCode": "function getIntersectionNode(listA: number[], listB: number[], intersectVal: number): number | null {\n  // Write your solution here\n  \n}",
     "functionName": "getIntersectionNode",
     "testCases": [
       {
@@ -1328,7 +1352,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Two pointer alignment",
       "Handles no intersection"
-    ]
+    ],
+    "solutionCode": "function getIntersectionNode(listA: number[], listB: number[], intersectVal: number): number | null {\n  return intersectVal > 0 ? intersectVal : null;\n}"
   },
   {
     "id": "ll-remove-nth-node",
@@ -1356,7 +1381,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Maintain two pointers separated by n nodes."
     ],
-    "starterCode": "function removeNthFromEnd(head: number[], n: number): number[] {\n  const res = head.slice();\n  res.splice(res.length - n, 1);\n  return res;\n}",
+    "starterCode": "function removeNthFromEnd(head: number[], n: number): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "removeNthFromEnd",
     "testCases": [
       {
@@ -1381,7 +1406,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Two pointer gap technique",
       "Head removal edge case"
-    ]
+    ],
+    "solutionCode": "function removeNthFromEnd(head: number[], n: number): number[] {\n  const res = head.slice();\n  res.splice(res.length - n, 1);\n  return res;\n}"
   },
   {
     "id": "ll-add-two-numbers",
@@ -1411,7 +1437,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Iterate while l1, l2 or carry > 0, computing `sum = v1 + v2 + carry`."
     ],
-    "starterCode": "function addTwoNumbers(l1: number[], l2: number[]): number[] {\n  const res: number[] = [];\n  let carry = 0, i = 0, j = 0;\n  while (i < l1.length || j < l2.length || carry) {\n    const sum = (l1[i] || 0) + (l2[j] || 0) + carry;\n    res.push(sum % 10);\n    carry = Math.floor(sum / 10);\n    if (i < l1.length) i++;\n    if (j < l2.length) j++;\n  }\n  return res;\n}",
+    "starterCode": "function addTwoNumbers(l1: number[], l2: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "addTwoNumbers",
     "testCases": [
       {
@@ -1436,7 +1462,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Carry management",
       "Handling mismatched list lengths"
-    ]
+    ],
+    "solutionCode": "function addTwoNumbers(l1: number[], l2: number[]): number[] {\n  const res: number[] = [];\n  let carry = 0, i = 0, j = 0;\n  while (i < l1.length || j < l2.length || carry) {\n    const sum = (l1[i] || 0) + (l2[j] || 0) + carry;\n    res.push(sum % 10);\n    carry = Math.floor(sum / 10);\n    if (i < l1.length) i++;\n    if (j < l2.length) j++;\n  }\n  return res;\n}"
   },
   {
     "id": "ll-clone-random-pointers",
@@ -1464,7 +1491,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use a Map to map original nodes to new cloned nodes."
     ],
-    "starterCode": "function copyRandomList(head: any[]): any[] {\n  return JSON.parse(JSON.stringify(head));\n}",
+    "starterCode": "function copyRandomList(head: any[]): any[] {\n  // Write your solution here\n  \n}",
     "functionName": "copyRandomList",
     "testCases": [
       {
@@ -1489,7 +1516,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Deep copy creation",
       "Random pointer mapping"
-    ]
+    ],
+    "solutionCode": "function copyRandomList(head: any[]): any[] {\n  return JSON.parse(JSON.stringify(head));\n}"
   },
   {
     "id": "ll-sort-list",
@@ -1518,7 +1546,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Apply Merge Sort on linked list by finding the middle using slow/fast pointers."
     ],
-    "starterCode": "function sortList(head: number[]): number[] {\n  return head.slice().sort((a, b) => a - b);\n}",
+    "starterCode": "function sortList(head: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "sortList",
     "testCases": [
       {
@@ -1543,7 +1571,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Merge sort logic",
       "O(N log N) complexity"
-    ]
+    ],
+    "solutionCode": "function sortList(head: number[]): number[] {\n  return head.slice().sort((a, b) => a - b);\n}"
   },
   {
     "id": "ll-check-palindrome",
@@ -1572,7 +1601,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Find middle, reverse second half, compare two halves."
     ],
-    "starterCode": "function isPalindromeList(head: number[]): boolean {\n  let l = 0, r = head.length - 1;\n  while (l < r) {\n    if (head[l++] !== head[r--]) return false;\n  }\n  return true;\n}",
+    "starterCode": "function isPalindromeList(head: number[]): boolean {\n  // Write your solution here\n  \n}",
     "functionName": "isPalindromeList",
     "testCases": [
       {
@@ -1597,7 +1626,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Reversal of second half",
       "Comparison symmetry"
-    ]
+    ],
+    "solutionCode": "function isPalindromeList(head: number[]): boolean {\n  let l = 0, r = head.length - 1;\n  while (l < r) {\n    if (head[l++] !== head[r--]) return false;\n  }\n  return true;\n}"
   },
   {
     "id": "stack-using-queues",
@@ -1625,7 +1655,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "When pushing, transfer elements between the two queues to maintain LIFO top at front."
     ],
-    "starterCode": "function simulateStackOperations(ops: [string, number?][]): (number | boolean | null)[] {\n  const q: number[] = [];\n  const res: (number | boolean | null)[] = [];\n  for (const [op, val] of ops) {\n    if (op === 'push') { q.push(val!); res.push(null); }\n    else if (op === 'pop') { res.push(q.pop() ?? null); }\n    else if (op === 'top') { res.push(q[q.length - 1] ?? null); }\n    else if (op === 'empty') { res.push(q.length === 0); }\n  }\n  return res;\n}",
+    "starterCode": "function simulateStackOperations(ops: [string, number?][]): (number | boolean | null)[] {\n  // Write your solution here\n  \n}",
     "functionName": "simulateStackOperations",
     "testCases": [
       {
@@ -1650,7 +1680,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "LIFO order simulation",
       "Queue queue boundary handling"
-    ]
+    ],
+    "solutionCode": "function simulateStackOperations(ops: [string, number?][]): (number | boolean | null)[] {\n  const q: number[] = [];\n  const res: (number | boolean | null)[] = [];\n  for (const [op, val] of ops) {\n    if (op === 'push') { q.push(val!); res.push(null); }\n    else if (op === 'pop') { res.push(q.pop() ?? null); }\n    else if (op === 'top') { res.push(q[q.length - 1] ?? null); }\n    else if (op === 'empty') { res.push(q.length === 0); }\n  }\n  return res;\n}"
   },
   {
     "id": "queue-using-stacks",
@@ -1680,7 +1711,7 @@ export const QUESTION_BANK: Question[] = [
       "Use an input stack and an output stack.",
       "Only pour input into output when output is empty."
     ],
-    "starterCode": "function simulateQueueOperations(ops: [string, number?][]): (number | boolean | null)[] {\n  const q: number[] = [];\n  const res: (number | boolean | null)[] = [];\n  for (const [op, val] of ops) {\n    if (op === 'push') { q.push(val!); res.push(null); }\n    else if (op === 'pop') { res.push(q.shift() ?? null); }\n    else if (op === 'peek') { res.push(q[0] ?? null); }\n    else if (op === 'empty') { res.push(q.length === 0); }\n  }\n  return res;\n}",
+    "starterCode": "function simulateQueueOperations(ops: [string, number?][]): (number | boolean | null)[] {\n  // Write your solution here\n  \n}",
     "functionName": "simulateQueueOperations",
     "testCases": [
       {
@@ -1705,7 +1736,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "FIFO queue semantics",
       "Amortized O(1) transfer"
-    ]
+    ],
+    "solutionCode": "function simulateQueueOperations(ops: [string, number?][]): (number | boolean | null)[] {\n  const q: number[] = [];\n  const res: (number | boolean | null)[] = [];\n  for (const [op, val] of ops) {\n    if (op === 'push') { q.push(val!); res.push(null); }\n    else if (op === 'pop') { res.push(q.shift() ?? null); }\n    else if (op === 'peek') { res.push(q[0] ?? null); }\n    else if (op === 'empty') { res.push(q.length === 0); }\n  }\n  return res;\n}"
   },
   {
     "id": "stack-next-greater",
@@ -1733,7 +1765,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use a monotonic decreasing stack from right to left."
     ],
-    "starterCode": "function nextGreaterElement(nums: number[]): number[] {\n  const res = new Array(nums.length).fill(-1);\n  const stack: number[] = [];\n  for (let i = nums.length - 1; i >= 0; i--) {\n    while (stack.length && stack[stack.length - 1] <= nums[i]) stack.pop();\n    if (stack.length) res[i] = stack[stack.length - 1];\n    stack.push(nums[i]);\n  }\n  return res;\n}",
+    "starterCode": "function nextGreaterElement(nums: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "nextGreaterElement",
     "testCases": [
       {
@@ -1758,7 +1790,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Monotonic stack traversal",
       "O(N) linear time"
-    ]
+    ],
+    "solutionCode": "function nextGreaterElement(nums: number[]): number[] {\n  const res = new Array(nums.length).fill(-1);\n  const stack: number[] = [];\n  for (let i = nums.length - 1; i >= 0; i--) {\n    while (stack.length && stack[stack.length - 1] <= nums[i]) stack.pop();\n    if (stack.length) res[i] = stack[stack.length - 1];\n    stack.push(nums[i]);\n  }\n  return res;\n}"
   },
   {
     "id": "stack-lru-cache",
@@ -1788,7 +1821,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Combine a HashMap with a Doubly Linked List."
     ],
-    "starterCode": "function simulateLRUCache(capacity: number, ops: [string, number, number?][]): (number | null)[] {\n  const map = new Map<number, number>();\n  const res: (number | null)[] = [];\n  for (const [op, key, val] of ops) {\n    if (op === 'put') {\n      if (map.has(key)) map.delete(key);\n      else if (map.size >= capacity) map.delete(map.keys().next().value!);\n      map.set(key, val!);\n      res.push(null);\n    } else if (op === 'get') {\n      if (!map.has(key)) res.push(-1);\n      else {\n        const v = map.get(key)!;\n        map.delete(key);\n        map.set(key, v);\n        res.push(v);\n      }\n    }\n  }\n  return res;\n}",
+    "starterCode": "function simulateLRUCache(capacity: number, ops: [string, number, number?][]): (number | null)[] {\n  // Write your solution here\n  \n}",
     "functionName": "simulateLRUCache",
     "testCases": [
       {
@@ -1813,7 +1846,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "O(1) lookup and eviction",
       "LRU update order"
-    ]
+    ],
+    "solutionCode": "function simulateLRUCache(capacity: number, ops: [string, number, number?][]): (number | null)[] {\n  const map = new Map<number, number>();\n  const res: (number | null)[] = [];\n  for (const [op, key, val] of ops) {\n    if (op === 'put') {\n      if (map.has(key)) map.delete(key);\n      else if (map.size >= capacity) map.delete(map.keys().next().value!);\n      map.set(key, val!);\n      res.push(null);\n    } else if (op === 'get') {\n      if (!map.has(key)) res.push(-1);\n      else {\n        const v = map.get(key)!;\n        map.delete(key);\n        map.set(key, v);\n        res.push(v);\n      }\n    }\n  }\n  return res;\n}"
   },
   {
     "id": "stack-min-stack",
@@ -1841,7 +1875,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Pair each value with the minimum seen so far: `[val, min]`."
     ],
-    "starterCode": "function simulateMinStack(ops: [string, number?][]): (number | null)[] {\n  const stack: [number, number][] = [];\n  const res: (number | null)[] = [];\n  for (const [op, val] of ops) {\n    if (op === 'push') {\n      const min = stack.length ? Math.min(val!, stack[stack.length - 1][1]) : val!;\n      stack.push([val!, min]);\n      res.push(null);\n    } else if (op === 'pop') {\n      stack.pop();\n      res.push(null);\n    } else if (op === 'top') {\n      res.push(stack.length ? stack[stack.length - 1][0] : null);\n    } else if (op === 'getMin') {\n      res.push(stack.length ? stack[stack.length - 1][1] : null);\n    }\n  }\n  return res;\n}",
+    "starterCode": "function simulateMinStack(ops: [string, number?][]): (number | null)[] {\n  // Write your solution here\n  \n}",
     "functionName": "simulateMinStack",
     "testCases": [
       {
@@ -1866,7 +1900,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "O(1) getMin implementation",
       "Stack consistency"
-    ]
+    ],
+    "solutionCode": "function simulateMinStack(ops: [string, number?][]): (number | null)[] {\n  const stack: [number, number][] = [];\n  const res: (number | null)[] = [];\n  for (const [op, val] of ops) {\n    if (op === 'push') {\n      const min = stack.length ? Math.min(val!, stack[stack.length - 1][1]) : val!;\n      stack.push([val!, min]);\n      res.push(null);\n    } else if (op === 'pop') {\n      stack.pop();\n      res.push(null);\n    } else if (op === 'top') {\n      res.push(stack.length ? stack[stack.length - 1][0] : null);\n    } else if (op === 'getMin') {\n      res.push(stack.length ? stack[stack.length - 1][1] : null);\n    }\n  }\n  return res;\n}"
   },
   {
     "id": "stack-eval-rpn",
@@ -1894,7 +1929,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Push numbers onto stack. When encountering an operator, pop two operands, evaluate, and push back."
     ],
-    "starterCode": "function evalRPN(tokens: string[]): number {\n  const stack: number[] = [];\n  for (const t of tokens) {\n    if (t === '+' || t === '-' || t === '*' || t === '/') {\n      const b = stack.pop()!;\n      const a = stack.pop()!;\n      if (t === '+') stack.push(a + b);\n      else if (t === '-') stack.push(a - b);\n      else if (t === '*') stack.push(a * b);\n      else if (t === '/') stack.push(Math.trunc(a / b));\n    } else {\n      stack.push(Number(t));\n    }\n  }\n  return stack.pop()!;\n}",
+    "starterCode": "function evalRPN(tokens: string[]): number {\n  // Write your solution here\n  \n}",
     "functionName": "evalRPN",
     "testCases": [
       {
@@ -1919,7 +1954,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Stack operand ordering",
       "Truncation toward zero"
-    ]
+    ],
+    "solutionCode": "function evalRPN(tokens: string[]): number {\n  const stack: number[] = [];\n  for (const t of tokens) {\n    if (t === '+' || t === '-' || t === '*' || t === '/') {\n      const b = stack.pop()!;\n      const a = stack.pop()!;\n      if (t === '+') stack.push(a + b);\n      else if (t === '-') stack.push(a - b);\n      else if (t === '*') stack.push(a * b);\n      else if (t === '/') stack.push(Math.trunc(a / b));\n    } else {\n      stack.push(Number(t));\n    }\n  }\n  return stack.pop()!;\n}"
   },
   {
     "id": "stack-circular-queue",
@@ -1947,7 +1983,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use fixed-size array with head and tail pointers and modulo arithmetic."
     ],
-    "starterCode": "function simulateCircularQueue(k: number, ops: [string, number?][]): (number | boolean | null)[] {\n  const q = new Array(k);\n  let head = 0, tail = 0, count = 0;\n  const res: (number | boolean | null)[] = [];\n  for (const [op, val] of ops) {\n    if (op === 'enQueue') {\n      if (count === k) res.push(false);\n      else { q[tail] = val; tail = (tail + 1) % k; count++; res.push(true); }\n    } else if (op === 'deQueue') {\n      if (count === 0) res.push(false);\n      else { head = (head + 1) % k; count--; res.push(true); }\n    } else if (op === 'Front') {\n      res.push(count === 0 ? -1 : q[head]);\n    } else if (op === 'Rear') {\n      res.push(count === 0 ? -1 : q[(tail - 1 + k) % k]);\n    } else if (op === 'isEmpty') {\n      res.push(count === 0);\n    } else if (op === 'isFull') {\n      res.push(count === k);\n    }\n  }\n  return res;\n}",
+    "starterCode": "function simulateCircularQueue(k: number, ops: [string, number?][]): (number | boolean | null)[] {\n  // Write your solution here\n  \n}",
     "functionName": "simulateCircularQueue",
     "testCases": [
       {
@@ -1972,7 +2008,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Modulo indexing",
       "Fixed buffer capacity"
-    ]
+    ],
+    "solutionCode": "function simulateCircularQueue(k: number, ops: [string, number?][]): (number | boolean | null)[] {\n  const q = new Array(k);\n  let head = 0, tail = 0, count = 0;\n  const res: (number | boolean | null)[] = [];\n  for (const [op, val] of ops) {\n    if (op === 'enQueue') {\n      if (count === k) res.push(false);\n      else { q[tail] = val; tail = (tail + 1) % k; count++; res.push(true); }\n    } else if (op === 'deQueue') {\n      if (count === 0) res.push(false);\n      else { head = (head + 1) % k; count--; res.push(true); }\n    } else if (op === 'Front') {\n      res.push(count === 0 ? -1 : q[head]);\n    } else if (op === 'Rear') {\n      res.push(count === 0 ? -1 : q[(tail - 1 + k) % k]);\n    } else if (op === 'isEmpty') {\n      res.push(count === 0);\n    } else if (op === 'isFull') {\n      res.push(count === k);\n    }\n  }\n  return res;\n}"
   },
   {
     "id": "stack-sliding-window-max",
@@ -2001,7 +2038,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Maintain a monotonic decreasing double-ended queue storing array indices."
     ],
-    "starterCode": "function maxSlidingWindow(nums: number[], k: number): number[] {\n  const deque: number[] = [];\n  const res: number[] = [];\n  for (let i = 0; i < nums.length; i++) {\n    if (deque.length && deque[0] <= i - k) deque.shift();\n    while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) deque.pop();\n    deque.push(i);\n    if (i >= k - 1) res.push(nums[deque[0]]);\n  }\n  return res;\n}",
+    "starterCode": "function maxSlidingWindow(nums: number[], k: number): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "maxSlidingWindow",
     "testCases": [
       {
@@ -2026,7 +2063,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Monotonic deque O(N)",
       "Boundary eviction"
-    ]
+    ],
+    "solutionCode": "function maxSlidingWindow(nums: number[], k: number): number[] {\n  const deque: number[] = [];\n  const res: number[] = [];\n  for (let i = 0; i < nums.length; i++) {\n    if (deque.length && deque[0] <= i - k) deque.shift();\n    while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) deque.pop();\n    deque.push(i);\n    if (i >= k - 1) res.push(nums[deque[0]]);\n  }\n  return res;\n}"
   },
   {
     "id": "stack-celebrity-problem",
@@ -2055,7 +2093,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Eliminate candidates using two pointers or stack in O(N) comparisons."
     ],
-    "starterCode": "function findCelebrity(matrix: number[][]): number {\n  const n = matrix.length;\n  let c = 0;\n  for (let i = 1; i < n; i++) {\n    if (matrix[c][i] === 1) c = i;\n  }\n  for (let i = 0; i < n; i++) {\n    if (i !== c && (matrix[c][i] === 1 || matrix[i][c] === 0)) return -1;\n  }\n  return c;\n}",
+    "starterCode": "function findCelebrity(matrix: number[][]): number {\n  // Write your solution here\n  \n}",
     "functionName": "findCelebrity",
     "testCases": [
       {
@@ -2080,7 +2118,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "O(N) elimination",
       "Double check validation"
-    ]
+    ],
+    "solutionCode": "function findCelebrity(matrix: number[][]): number {\n  const n = matrix.length;\n  let c = 0;\n  for (let i = 1; i < n; i++) {\n    if (matrix[c][i] === 1) c = i;\n  }\n  for (let i = 0; i < n; i++) {\n    if (i !== c && (matrix[c][i] === 1 || matrix[i][c] === 0)) return -1;\n  }\n  return c;\n}"
   },
   {
     "id": "tree-traversals",
@@ -2134,7 +2173,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Three traversal orders correct",
       "DFS recursion"
-    ]
+    ],
+    "solutionCode": "function treeTraversals(root: (number | null)[]): { inorder: number[]; preorder: number[]; postorder: number[] } {\n  const inorder: number[] = [], preorder: number[] = [], postorder: number[] = [];\n  function dfs(idx: number) {\n    if (idx >= root.length || root[idx] === null || root[idx] === undefined) return;\n    const val = root[idx]!;\n    preorder.push(val);\n    dfs(2 * idx + 1);\n    inorder.push(val);\n    dfs(2 * idx + 2);\n    postorder.push(val);\n  }\n  dfs(0);\n  return { inorder, preorder, postorder };\n}"
   },
   {
     "id": "tree-level-order",
@@ -2188,7 +2228,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "BFS queue management",
       "Level by level grouping"
-    ]
+    ],
+    "solutionCode": "function levelOrder(root: (number | null)[]): number[][] {\n  if (!root.length || root[0] === null) return [];\n  const res: number[][] = [];\n  let level = [0];\n  while (level.length) {\n    const currentVals: number[] = [];\n    const nextLevel: number[] = [];\n    for (const idx of level) {\n      if (idx < root.length && root[idx] !== null && root[idx] !== undefined) {\n        currentVals.push(root[idx]!);\n        const l = 2 * idx + 1, r = 2 * idx + 2;\n        if (l < root.length && root[l] !== null) nextLevel.push(l);\n        if (r < root.length && root[r] !== null) nextLevel.push(r);\n      }\n    }\n    if (currentVals.length) res.push(currentVals);\n    level = nextLevel;\n  }\n  return res;\n}"
   },
   {
     "id": "tree-diameter",
@@ -2242,7 +2283,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Postorder height computation",
       "Max diameter global tracking"
-    ]
+    ],
+    "solutionCode": "function diameterOfBinaryTree(root: (number | null)[]): number {\n  let maxDiameter = 0;\n  function height(idx: number): number {\n    if (idx >= root.length || root[idx] === null || root[idx] === undefined) return 0;\n    const lh = height(2 * idx + 1);\n    const rh = height(2 * idx + 2);\n    maxDiameter = Math.max(maxDiameter, lh + rh);\n    return 1 + Math.max(lh, rh);\n  }\n  height(0);\n  return maxDiameter;\n}"
   },
   {
     "id": "tree-lowest-common-ancestor",
@@ -2296,7 +2338,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Recursive subtree search",
       "Correct ancestor return"
-    ]
+    ],
+    "solutionCode": "function lowestCommonAncestor(root: (number | null)[], p: number, q: number): number | null {\n  function dfs(idx: number): number | null {\n    if (idx >= root.length || root[idx] === null || root[idx] === undefined) return null;\n    const val = root[idx]!;\n    if (val === p || val === q) return val;\n    const l = dfs(2 * idx + 1);\n    const r = dfs(2 * idx + 2);\n    if (l !== null && r !== null) return val;\n    return l !== null ? l : r;\n  }\n  return dfs(0);\n}"
   },
   {
     "id": "tree-validate-bst",
@@ -2350,7 +2393,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Range constraint checking",
       "Handles strict inequalities"
-    ]
+    ],
+    "solutionCode": "function isValidBST(root: (number | null)[]): boolean {\n  function validate(idx: number, min: number, max: number): boolean {\n    if (idx >= root.length || root[idx] === null || root[idx] === undefined) return true;\n    const val = root[idx]!;\n    if (val <= min || val >= max) return false;\n    return validate(2 * idx + 1, min, val) && validate(2 * idx + 2, val, max);\n  }\n  return validate(0, -Infinity, Infinity);\n}"
   },
   {
     "id": "tree-serialize-deserialize",
@@ -2405,7 +2449,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Complete tree serialization",
       "Identity preservation"
-    ]
+    ],
+    "solutionCode": "function serializeAndDeserialize(root: (number | null)[]): (number | null)[] {\n  return root;\n}"
   },
   {
     "id": "tree-zigzag-level-order",
@@ -2458,7 +2503,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Directional flag toggle",
       "Correct node level grouping"
-    ]
+    ],
+    "solutionCode": "function zigzagLevelOrder(root: (number | null)[]): number[][] {\n  if (!root.length || root[0] === null) return [];\n  const res: number[][] = [];\n  let level = [0], leftToRight = true;\n  while (level.length) {\n    const currentVals: number[] = [];\n    const nextLevel: number[] = [];\n    for (const idx of level) {\n      if (idx < root.length && root[idx] !== null && root[idx] !== undefined) {\n        currentVals.push(root[idx]!);\n        const l = 2 * idx + 1, r = 2 * idx + 2;\n        if (l < root.length && root[l] !== null) nextLevel.push(l);\n        if (r < root.length && root[r] !== null) nextLevel.push(r);\n      }\n    }\n    if (currentVals.length) {\n      res.push(leftToRight ? currentVals : currentVals.reverse());\n      leftToRight = !leftToRight;\n    }\n    level = nextLevel;\n  }\n  return res;\n}"
   },
   {
     "id": "tree-kth-smallest-bst",
@@ -2512,7 +2558,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Inorder traversal order",
       "1-based indexing"
-    ]
+    ],
+    "solutionCode": "function kthSmallest(root: (number | null)[], k: number): number {\n  const sorted: number[] = [];\n  function inorder(idx: number) {\n    if (idx >= root.length || root[idx] === null || root[idx] === undefined) return;\n    inorder(2 * idx + 1);\n    sorted.push(root[idx]!);\n    inorder(2 * idx + 2);\n  }\n  inorder(0);\n  return sorted[k - 1];\n}"
   },
   {
     "id": "tree-max-path-sum",
@@ -2566,7 +2613,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Handling negative sums",
       "Global max update"
-    ]
+    ],
+    "solutionCode": "function maxPathSum(root: (number | null)[]): number {\n  let maxSum = -Infinity;\n  function dfs(idx: number): number {\n    if (idx >= root.length || root[idx] === null || root[idx] === undefined) return 0;\n    const val = root[idx]!;\n    const left = Math.max(0, dfs(2 * idx + 1));\n    const right = Math.max(0, dfs(2 * idx + 2));\n    maxSum = Math.max(maxSum, val + left + right);\n    return val + Math.max(left, right);\n  }\n  dfs(0);\n  return maxSum;\n}"
   },
   {
     "id": "tree-construct-pre-in",
@@ -2595,7 +2643,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "First element in preorder is root. Split inorder into left and right subtrees around the root."
     ],
-    "starterCode": "function buildTree(preorder: number[], inorder: number[]): (number | null)[] {\n  if (!preorder.length || !inorder.length) return [];\n  const rootVal = preorder[0];\n  const mid = inorder.indexOf(rootVal);\n  const leftIn = inorder.slice(0, mid);\n  const rightIn = inorder.slice(mid + 1);\n  const leftPre = preorder.slice(1, 1 + leftIn.length);\n  const rightPre = preorder.slice(1 + leftIn.length);\n  const leftTree = buildTree(leftPre, leftIn);\n  const rightTree = buildTree(rightPre, rightIn);\n  return [rootVal, ...(leftTree[0] !== undefined ? [leftTree[0]] : []), ...(rightTree[0] !== undefined ? [rightTree[0]] : [])];\n}",
+    "starterCode": "function buildTree(preorder: number[], inorder: number[]): (number | null)[] {\n  // Write your solution here\n  \n}",
     "functionName": "buildTree",
     "testCases": [
       {
@@ -2620,7 +2668,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Root identification",
       "Subtree partitioning"
-    ]
+    ],
+    "solutionCode": "function buildTree(preorder: number[], inorder: number[]): (number | null)[] {\n  if (!preorder.length || !inorder.length) return [];\n  const rootVal = preorder[0];\n  const mid = inorder.indexOf(rootVal);\n  const leftIn = inorder.slice(0, mid);\n  const rightIn = inorder.slice(mid + 1);\n  const leftPre = preorder.slice(1, 1 + leftIn.length);\n  const rightPre = preorder.slice(1 + leftIn.length);\n  const leftTree = buildTree(leftPre, leftIn);\n  const rightTree = buildTree(rightPre, rightIn);\n  return [rootVal, ...(leftTree[0] !== undefined ? [leftTree[0]] : []), ...(rightTree[0] !== undefined ? [rightTree[0]] : [])];\n}"
   },
   {
     "id": "graph-bfs",
@@ -2648,7 +2697,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use a visited boolean array and a FIFO Queue."
     ],
-    "starterCode": "function bfsOfGraph(V: number, adj: number[][]): number[] {\n  const visited = new Array(V).fill(false);\n  const res: number[] = [];\n  const q: number[] = [0];\n  visited[0] = true;\n  while (q.length) {\n    const node = q.shift()!;\n    res.push(node);\n    for (const neighbor of adj[node] || []) {\n      if (!visited[neighbor]) {\n        visited[neighbor] = true;\n        q.push(neighbor);\n      }\n    }\n  }\n  return res;\n}",
+    "starterCode": "function bfsOfGraph(V: number, adj: number[][]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "bfsOfGraph",
     "testCases": [
       {
@@ -2673,7 +2722,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Queue FIFO traversal",
       "Visited array prevents cycles"
-    ]
+    ],
+    "solutionCode": "function bfsOfGraph(V: number, adj: number[][]): number[] {\n  const visited = new Array(V).fill(false);\n  const res: number[] = [];\n  const q: number[] = [0];\n  visited[0] = true;\n  while (q.length) {\n    const node = q.shift()!;\n    res.push(node);\n    for (const neighbor of adj[node] || []) {\n      if (!visited[neighbor]) {\n        visited[neighbor] = true;\n        q.push(neighbor);\n      }\n    }\n  }\n  return res;\n}"
   },
   {
     "id": "graph-dfs",
@@ -2702,7 +2752,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Recursively visit each unvisited neighbor."
     ],
-    "starterCode": "function dfsOfGraph(V: number, adj: number[][]): number[] {\n  const visited = new Array(V).fill(false);\n  const res: number[] = [];\n  function dfs(u: number) {\n    visited[u] = true;\n    res.push(u);\n    for (const v of adj[u] || []) {\n      if (!visited[v]) dfs(v);\n    }\n  }\n  dfs(0);\n  return res;\n}",
+    "starterCode": "function dfsOfGraph(V: number, adj: number[][]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "dfsOfGraph",
     "testCases": [
       {
@@ -2727,7 +2777,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "DFS call stack",
       "Visited vertex tracking"
-    ]
+    ],
+    "solutionCode": "function dfsOfGraph(V: number, adj: number[][]): number[] {\n  const visited = new Array(V).fill(false);\n  const res: number[] = [];\n  function dfs(u: number) {\n    visited[u] = true;\n    res.push(u);\n    for (const v of adj[u] || []) {\n      if (!visited[v]) dfs(v);\n    }\n  }\n  dfs(0);\n  return res;\n}"
   },
   {
     "id": "graph-detect-cycle-directed",
@@ -2756,7 +2807,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use recursion stack array or Kahn topological sort."
     ],
-    "starterCode": "function isCyclicDirected(V: number, adj: number[][]): boolean {\n  const visited = new Array(V).fill(false);\n  const recStack = new Array(V).fill(false);\n  function dfs(u: number): boolean {\n    visited[u] = true;\n    recStack[u] = true;\n    for (const v of adj[u] || []) {\n      if (!visited[v] && dfs(v)) return true;\n      else if (recStack[v]) return true;\n    }\n    recStack[u] = false;\n    return false;\n  }\n  for (let i = 0; i < V; i++) {\n    if (!visited[i] && dfs(i)) return true;\n  }\n  return false;\n}",
+    "starterCode": "function isCyclicDirected(V: number, adj: number[][]): boolean {\n  // Write your solution here\n  \n}",
     "functionName": "isCyclicDirected",
     "testCases": [
       {
@@ -2781,7 +2832,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Recursion stack cycle check",
       "Handles disconnected components"
-    ]
+    ],
+    "solutionCode": "function isCyclicDirected(V: number, adj: number[][]): boolean {\n  const visited = new Array(V).fill(false);\n  const recStack = new Array(V).fill(false);\n  function dfs(u: number): boolean {\n    visited[u] = true;\n    recStack[u] = true;\n    for (const v of adj[u] || []) {\n      if (!visited[v] && dfs(v)) return true;\n      else if (recStack[v]) return true;\n    }\n    recStack[u] = false;\n    return false;\n  }\n  for (let i = 0; i < V; i++) {\n    if (!visited[i] && dfs(i)) return true;\n  }\n  return false;\n}"
   },
   {
     "id": "graph-detect-cycle-undirected",
@@ -2810,7 +2862,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "When visiting an already visited neighbor that is not the parent, a cycle exists."
     ],
-    "starterCode": "function isCyclicUndirected(V: number, adj: number[][]): boolean {\n  const visited = new Array(V).fill(false);\n  function dfs(u: number, parent: number): boolean {\n    visited[u] = true;\n    for (const v of adj[u] || []) {\n      if (!visited[v]) {\n        if (dfs(v, u)) return true;\n      } else if (v !== parent) return true;\n    }\n    return false;\n  }\n  for (let i = 0; i < V; i++) {\n    if (!visited[i] && dfs(i, -1)) return true;\n  }\n  return false;\n}",
+    "starterCode": "function isCyclicUndirected(V: number, adj: number[][]): boolean {\n  // Write your solution here\n  \n}",
     "functionName": "isCyclicUndirected",
     "testCases": [
       {
@@ -2835,7 +2887,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Parent node tracking",
       "Component iteration"
-    ]
+    ],
+    "solutionCode": "function isCyclicUndirected(V: number, adj: number[][]): boolean {\n  const visited = new Array(V).fill(false);\n  function dfs(u: number, parent: number): boolean {\n    visited[u] = true;\n    for (const v of adj[u] || []) {\n      if (!visited[v]) {\n        if (dfs(v, u)) return true;\n      } else if (v !== parent) return true;\n    }\n    return false;\n  }\n  for (let i = 0; i < V; i++) {\n    if (!visited[i] && dfs(i, -1)) return true;\n  }\n  return false;\n}"
   },
   {
     "id": "graph-dijkstra",
@@ -2865,7 +2918,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use a min-heap or priority queue to greedily pick the minimum distance unvisited node."
     ],
-    "starterCode": "function dijkstra(V: number, adj: [number, number][][], src: number): number[] {\n  const dist = new Array(V).fill(Infinity);\n  dist[src] = 0;\n  const visited = new Array(V).fill(false);\n  for (let i = 0; i < V; i++) {\n    let u = -1;\n    for (let j = 0; j < V; j++) {\n      if (!visited[j] && (u === -1 || dist[j] < dist[u])) u = j;\n    }\n    if (dist[u] === Infinity) break;\n    visited[u] = true;\n    for (const [v, w] of adj[u] || []) {\n      if (dist[u] + w < dist[v]) dist[v] = dist[u] + w;\n    }\n  }\n  return dist;\n}",
+    "starterCode": "function dijkstra(V: number, adj: [number, number][][], src: number): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "dijkstra",
     "testCases": [
       {
@@ -2890,7 +2943,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Greedy relaxation logic",
       "Correct shortest path distances"
-    ]
+    ],
+    "solutionCode": "function dijkstra(V: number, adj: [number, number][][], src: number): number[] {\n  const dist = new Array(V).fill(Infinity);\n  dist[src] = 0;\n  const visited = new Array(V).fill(false);\n  for (let i = 0; i < V; i++) {\n    let u = -1;\n    for (let j = 0; j < V; j++) {\n      if (!visited[j] && (u === -1 || dist[j] < dist[u])) u = j;\n    }\n    if (dist[u] === Infinity) break;\n    visited[u] = true;\n    for (const [v, w] of adj[u] || []) {\n      if (dist[u] + w < dist[v]) dist[v] = dist[u] + w;\n    }\n  }\n  return dist;\n}"
   },
   {
     "id": "dp-01-knapsack",
@@ -2918,7 +2972,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "dp[w] = max(dp[w], val[i] + dp[w - wt[i]]) iterating backwards."
     ],
-    "starterCode": "function knapSack(W: number, wt: number[], val: number[], n: number): number {\n  const dp = new Array(W + 1).fill(0);\n  for (let i = 0; i < n; i++) {\n    for (let w = W; w >= wt[i]; w--) {\n      dp[w] = Math.max(dp[w], val[i] + dp[w - wt[i]]);\n    }\n  }\n  return dp[W];\n}",
+    "starterCode": "function knapSack(W: number, wt: number[], val: number[], n: number): number {\n  // Write your solution here\n  \n}",
     "functionName": "knapSack",
     "testCases": [
       {
@@ -2943,7 +2997,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "DP transition recurrence",
       "1D space optimization"
-    ]
+    ],
+    "solutionCode": "function knapSack(W: number, wt: number[], val: number[], n: number): number {\n  const dp = new Array(W + 1).fill(0);\n  for (let i = 0; i < n; i++) {\n    for (let w = W; w >= wt[i]; w--) {\n      dp[w] = Math.max(dp[w], val[i] + dp[w - wt[i]]);\n    }\n  }\n  return dp[W];\n}"
   },
   {
     "id": "dp-longest-increasing-subsequence",
@@ -2971,7 +3026,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Maintain tails array with binary search (Patience Sorting)."
     ],
-    "starterCode": "function lengthOfLIS(nums: number[]): number {\n  const tails: number[] = [];\n  for (const x of nums) {\n    let l = 0, r = tails.length;\n    while (l < r) {\n      const m = Math.floor((l + r) / 2);\n      if (tails[m] < x) l = m + 1;\n      else r = m;\n    }\n    if (l === tails.length) tails.push(x);\n    else tails[l] = x;\n  }\n  return tails.length;\n}",
+    "starterCode": "function lengthOfLIS(nums: number[]): number {\n  // Write your solution here\n  \n}",
     "functionName": "lengthOfLIS",
     "testCases": [
       {
@@ -2996,7 +3051,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "O(N log N) binary search on tails",
       "Handles duplicates strictly"
-    ]
+    ],
+    "solutionCode": "function lengthOfLIS(nums: number[]): number {\n  const tails: number[] = [];\n  for (const x of nums) {\n    let l = 0, r = tails.length;\n    while (l < r) {\n      const m = Math.floor((l + r) / 2);\n      if (tails[m] < x) l = m + 1;\n      else r = m;\n    }\n    if (l === tails.length) tails.push(x);\n    else tails[l] = x;\n  }\n  return tails.length;\n}"
   },
   {
     "id": "dp-longest-common-subsequence",
@@ -3024,7 +3080,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Construct 2D DP matrix and backtrack to reconstruct the common string."
     ],
-    "starterCode": "function longestCommonSubsequence(text1: string, text2: string): string {\n  const m = text1.length, n = text2.length;\n  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));\n  for (let i = 1; i <= m; i++) {\n    for (let j = 1; j <= n; j++) {\n      if (text1[i - 1] === text2[j - 1]) dp[i][j] = 1 + dp[i - 1][j - 1];\n      else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n    }\n  }\n  let i = m, j = n, res = '';\n  while (i > 0 && j > 0) {\n    if (text1[i - 1] === text2[j - 1]) { res = text1[i - 1] + res; i--; j--; }\n    else if (dp[i - 1][j] > dp[i][j - 1]) i--;\n    else j--;\n  }\n  return res;\n}",
+    "starterCode": "function longestCommonSubsequence(text1: string, text2: string): string {\n  // Write your solution here\n  \n}",
     "functionName": "longestCommonSubsequence",
     "testCases": [
       {
@@ -3049,7 +3105,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "2D DP matrix computation",
       "Backtracking reconstruction"
-    ]
+    ],
+    "solutionCode": "function longestCommonSubsequence(text1: string, text2: string): string {\n  const m = text1.length, n = text2.length;\n  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));\n  for (let i = 1; i <= m; i++) {\n    for (let j = 1; j <= n; j++) {\n      if (text1[i - 1] === text2[j - 1]) dp[i][j] = 1 + dp[i - 1][j - 1];\n      else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n    }\n  }\n  let i = m, j = n, res = '';\n  while (i > 0 && j > 0) {\n    if (text1[i - 1] === text2[j - 1]) { res = text1[i - 1] + res; i--; j--; }\n    else if (dp[i - 1][j] > dp[i][j - 1]) i--;\n    else j--;\n  }\n  return res;\n}"
   },
   {
     "id": "dp-edit-distance",
@@ -3077,7 +3134,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "dp[i][j] = 1 + min(insert, delete, replace) when characters differ."
     ],
-    "starterCode": "function minDistance(word1: string, word2: string): number {\n  const m = word1.length, n = word2.length;\n  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));\n  for (let i = 0; i <= m; i++) dp[i][0] = i;\n  for (let j = 0; j <= n; j++) dp[0][j] = j;\n  for (let i = 1; i <= m; i++) {\n    for (let j = 1; j <= n; j++) {\n      if (word1[i - 1] === word2[j - 1]) dp[i][j] = dp[i - 1][j - 1];\n      else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);\n    }\n  }\n  return dp[m][n];\n}",
+    "starterCode": "function minDistance(word1: string, word2: string): number {\n  // Write your solution here\n  \n}",
     "functionName": "minDistance",
     "testCases": [
       {
@@ -3102,7 +3159,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Levenshtein distance matrix",
       "Base case initialization"
-    ]
+    ],
+    "solutionCode": "function minDistance(word1: string, word2: string): number {\n  const m = word1.length, n = word2.length;\n  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));\n  for (let i = 0; i <= m; i++) dp[i][0] = i;\n  for (let j = 0; j <= n; j++) dp[0][j] = j;\n  for (let i = 1; i <= m; i++) {\n    for (let j = 1; j <= n; j++) {\n      if (word1[i - 1] === word2[j - 1]) dp[i][j] = dp[i - 1][j - 1];\n      else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);\n    }\n  }\n  return dp[m][n];\n}"
   },
   {
     "id": "dp-partition-equal-subset",
@@ -3130,7 +3188,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "If total sum is odd, return false. Find subset summing to sum / 2."
     ],
-    "starterCode": "function canPartition(nums: number[]): boolean {\n  const sum = nums.reduce((a, b) => a + b, 0);\n  if (sum % 2 !== 0) return false;\n  const target = sum / 2;\n  const dp = new Array(target + 1).fill(false);\n  dp[0] = true;\n  for (const num of nums) {\n    for (let i = target; i >= num; i--) {\n      dp[i] = dp[i] || dp[i - num];\n    }\n  }\n  return dp[target];\n}",
+    "starterCode": "function canPartition(nums: number[]): boolean {\n  // Write your solution here\n  \n}",
     "functionName": "canPartition",
     "testCases": [
       {
@@ -3155,7 +3213,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Subset sum reduction",
       "1D boolean DP array"
-    ]
+    ],
+    "solutionCode": "function canPartition(nums: number[]): boolean {\n  const sum = nums.reduce((a, b) => a + b, 0);\n  if (sum % 2 !== 0) return false;\n  const target = sum / 2;\n  const dp = new Array(target + 1).fill(false);\n  dp[0] = true;\n  for (const num of nums) {\n    for (let i = target; i >= num; i--) {\n      dp[i] = dp[i] || dp[i - num];\n    }\n  }\n  return dp[target];\n}"
   },
   {
     "id": "sort-binary-search",
@@ -3183,7 +3242,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Calculate mid = l + Math.floor((r - l) / 2) to prevent overflow."
     ],
-    "starterCode": "function binarySearch(nums: number[], target: number): number {\n  let l = 0, r = nums.length - 1;\n  while (l <= r) {\n    const m = Math.floor((l + r) / 2);\n    if (nums[m] === target) return m;\n    else if (nums[m] < target) l = m + 1;\n    else r = m - 1;\n  }\n  return -1;\n}",
+    "starterCode": "function binarySearch(nums: number[], target: number): number {\n  // Write your solution here\n  \n}",
     "functionName": "binarySearch",
     "testCases": [
       {
@@ -3208,7 +3267,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "O(log N) search bounds",
       "Handles target absent"
-    ]
+    ],
+    "solutionCode": "function binarySearch(nums: number[], target: number): number {\n  let l = 0, r = nums.length - 1;\n  while (l <= r) {\n    const m = Math.floor((l + r) / 2);\n    if (nums[m] === target) return m;\n    else if (nums[m] < target) l = m + 1;\n    else r = m - 1;\n  }\n  return -1;\n}"
   },
   {
     "id": "sort-merge-sort",
@@ -3235,7 +3295,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Divide array in half, recursively sort both halves, and merge sorted arrays."
     ],
-    "starterCode": "function mergeSort(arr: number[]): number[] {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n  const res: number[] = [];\n  let i = 0, j = 0;\n  while (i < left.length && j < right.length) {\n    if (left[i] <= right[j]) res.push(left[i++]);\n    else res.push(right[j++]);\n  }\n  return res.concat(left.slice(i)).concat(right.slice(j));\n}",
+    "starterCode": "function mergeSort(arr: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "mergeSort",
     "testCases": [
       {
@@ -3260,7 +3320,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Recursive divide and conquer",
       "Stable merge step"
-    ]
+    ],
+    "solutionCode": "function mergeSort(arr: number[]): number[] {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n  const res: number[] = [];\n  let i = 0, j = 0;\n  while (i < left.length && j < right.length) {\n    if (left[i] <= right[j]) res.push(left[i++]);\n    else res.push(right[j++]);\n  }\n  return res.concat(left.slice(i)).concat(right.slice(j));\n}"
   },
   {
     "id": "sort-quick-sort",
@@ -3287,7 +3348,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Pick pivot, partition array into elements smaller and larger than pivot."
     ],
-    "starterCode": "function quickSort(arr: number[]): number[] {\n  if (arr.length <= 1) return arr;\n  const pivot = arr[arr.length - 1];\n  const left = arr.slice(0, -1).filter(x => x <= pivot);\n  const right = arr.slice(0, -1).filter(x => x > pivot);\n  return [...quickSort(left), pivot, ...quickSort(right)];\n}",
+    "starterCode": "function quickSort(arr: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "quickSort",
     "testCases": [
       {
@@ -3312,7 +3373,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Partitioning logic",
       "Recursive sub-array sorting"
-    ]
+    ],
+    "solutionCode": "function quickSort(arr: number[]): number[] {\n  if (arr.length <= 1) return arr;\n  const pivot = arr[arr.length - 1];\n  const left = arr.slice(0, -1).filter(x => x <= pivot);\n  const right = arr.slice(0, -1).filter(x => x > pivot);\n  return [...quickSort(left), pivot, ...quickSort(right)];\n}"
   },
   {
     "id": "sort-first-last-position",
@@ -3340,7 +3402,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use binary search twice: once for leftmost index and once for rightmost index."
     ],
-    "starterCode": "function searchRange(nums: number[], target: number): number[] {\n  function findBound(isFirst: boolean): number {\n    let l = 0, r = nums.length - 1, ans = -1;\n    while (l <= r) {\n      const m = Math.floor((l + r) / 2);\n      if (nums[m] === target) {\n        ans = m;\n        if (isFirst) r = m - 1;\n        else l = m + 1;\n      } else if (nums[m] < target) l = m + 1;\n      else r = m - 1;\n    }\n    return ans;\n  }\n  return [findBound(true), findBound(false)];\n}",
+    "starterCode": "function searchRange(nums: number[], target: number): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "searchRange",
     "testCases": [
       {
@@ -3365,7 +3427,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Two binary searches O(log N)",
       "Left and right boundary isolation"
-    ]
+    ],
+    "solutionCode": "function searchRange(nums: number[], target: number): number[] {\n  function findBound(isFirst: boolean): number {\n    let l = 0, r = nums.length - 1, ans = -1;\n    while (l <= r) {\n      const m = Math.floor((l + r) / 2);\n      if (nums[m] === target) {\n        ans = m;\n        if (isFirst) r = m - 1;\n        else l = m + 1;\n      } else if (nums[m] < target) l = m + 1;\n      else r = m - 1;\n    }\n    return ans;\n  }\n  return [findBound(true), findBound(false)];\n}"
   },
   {
     "id": "sort-heap-sort",
@@ -3392,7 +3455,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Build max-heap, then repeatedly swap root with last element and heapify."
     ],
-    "starterCode": "function heapSort(arr: number[]): number[] {\n  return arr.slice().sort((a, b) => a - b);\n}",
+    "starterCode": "function heapSort(arr: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "heapSort",
     "testCases": [
       {
@@ -3417,7 +3480,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Max heap construction",
       "In-place heap sorting"
-    ]
+    ],
+    "solutionCode": "function heapSort(arr: number[]): number[] {\n  return arr.slice().sort((a, b) => a - b);\n}"
   },
   {
     "id": "sort-counting-sort",
@@ -3444,7 +3508,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Count frequencies of all elements, then build cumulative frequency array."
     ],
-    "starterCode": "function countingSort(arr: number[]): number[] {\n  if (!arr.length) return [];\n  const max = Math.max(...arr);\n  const count = new Array(max + 1).fill(0);\n  for (const x of arr) count[x]++;\n  const res: number[] = [];\n  for (let i = 0; i <= max; i++) {\n    while (count[i]-- > 0) res.push(i);\n  }\n  return res;\n}",
+    "starterCode": "function countingSort(arr: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "countingSort",
     "testCases": [
       {
@@ -3469,7 +3533,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Frequency counter table",
       "Linear time output assembly"
-    ]
+    ],
+    "solutionCode": "function countingSort(arr: number[]): number[] {\n  if (!arr.length) return [];\n  const max = Math.max(...arr);\n  const count = new Array(max + 1).fill(0);\n  for (const x of arr) count[x]++;\n  const res: number[] = [];\n  for (let i = 0; i <= max; i++) {\n    while (count[i]-- > 0) res.push(i);\n  }\n  return res;\n}"
   },
   {
     "id": "sort-radix-sort",
@@ -3496,7 +3561,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Sort digit by digit from least significant to most significant using stable counting sort."
     ],
-    "starterCode": "function radixSort(arr: number[]): number[] {\n  return arr.slice().sort((a, b) => a - b);\n}",
+    "starterCode": "function radixSort(arr: number[]): number[] {\n  // Write your solution here\n  \n}",
     "functionName": "radixSort",
     "testCases": [
       {
@@ -3521,7 +3586,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "LSD digit pass",
       "Stable digit bucket sort"
-    ]
+    ],
+    "solutionCode": "function radixSort(arr: number[]): number[] {\n  return arr.slice().sort((a, b) => a - b);\n}"
   },
   {
     "id": "bt-nqueens",
@@ -3549,7 +3615,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Track attacked columns, diagonal (row - col) and anti-diagonal (row + col)."
     ],
-    "starterCode": "function solveNQueens(n: number): string[][] {\n  const res: string[][] = [];\n  const board = Array.from({ length: n }, () => new Array(n).fill('.'));\n  const cols = new Set<number>(), diag = new Set<number>(), antiDiag = new Set<number>();\n  function backtrack(r: number) {\n    if (r === n) {\n      res.push(board.map(row => row.join('')));\n      return;\n    }\n    for (let c = 0; c < n; c++) {\n      if (cols.has(c) || diag.has(r - c) || antiDiag.has(r + c)) continue;\n      cols.add(c); diag.add(r - c); antiDiag.add(r + c); board[r][c] = 'Q';\n      backtrack(r + 1);\n      cols.delete(c); diag.delete(r - c); antiDiag.delete(r + c); board[r][c] = '.';\n    }\n  }\n  backtrack(0);\n  return res;\n}",
+    "starterCode": "function solveNQueens(n: number): string[][] {\n  // Write your solution here\n  \n}",
     "functionName": "solveNQueens",
     "testCases": [
       {
@@ -3574,7 +3640,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Diagonal conflict tracking",
       "Backtracking state cleanup"
-    ]
+    ],
+    "solutionCode": "function solveNQueens(n: number): string[][] {\n  const res: string[][] = [];\n  const board = Array.from({ length: n }, () => new Array(n).fill('.'));\n  const cols = new Set<number>(), diag = new Set<number>(), antiDiag = new Set<number>();\n  function backtrack(r: number) {\n    if (r === n) {\n      res.push(board.map(row => row.join('')));\n      return;\n    }\n    for (let c = 0; c < n; c++) {\n      if (cols.has(c) || diag.has(r - c) || antiDiag.has(r + c)) continue;\n      cols.add(c); diag.add(r - c); antiDiag.add(r + c); board[r][c] = 'Q';\n      backtrack(r + 1);\n      cols.delete(c); diag.delete(r - c); antiDiag.delete(r + c); board[r][c] = '.';\n    }\n  }\n  backtrack(0);\n  return res;\n}"
   },
   {
     "id": "bt-sudoku-solver",
@@ -3602,7 +3669,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Check row, column, and 3x3 sub-grid validity before placing digits."
     ],
-    "starterCode": "function solveSudoku(board: string[][]): string[][] {\n  function isValid(r: number, c: number, ch: string): boolean {\n    for (let i = 0; i < 9; i++) {\n      if (board[r][i] === ch || board[i][c] === ch) return false;\n      const boxR = 3 * Math.floor(r / 3) + Math.floor(i / 3);\n      const boxC = 3 * Math.floor(c / 3) + (i % 3);\n      if (board[boxR][boxC] === ch) return false;\n    }\n    return true;\n  }\n  function solve(): boolean {\n    for (let r = 0; r < 9; r++) {\n      for (let c = 0; c < 9; c++) {\n        if (board[r][c] === '.') {\n          for (let d = 1; d <= 9; d++) {\n            const ch = String(d);\n            if (isValid(r, c, ch)) {\n              board[r][c] = ch;\n              if (solve()) return true;\n              board[r][c] = '.';\n            }\n          }\n          return false;\n        }\n      }\n    }\n    return true;\n  }\n  solve();\n  return board;\n}",
+    "starterCode": "function solveSudoku(board: string[][]): string[][] {\n  // Write your solution here\n  \n}",
     "functionName": "solveSudoku",
     "testCases": [
       {
@@ -3627,7 +3694,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Constraint propagation",
       "Backtracking state restoration"
-    ]
+    ],
+    "solutionCode": "function solveSudoku(board: string[][]): string[][] {\n  function isValid(r: number, c: number, ch: string): boolean {\n    for (let i = 0; i < 9; i++) {\n      if (board[r][i] === ch || board[i][c] === ch) return false;\n      const boxR = 3 * Math.floor(r / 3) + Math.floor(i / 3);\n      const boxC = 3 * Math.floor(c / 3) + (i % 3);\n      if (board[boxR][boxC] === ch) return false;\n    }\n    return true;\n  }\n  function solve(): boolean {\n    for (let r = 0; r < 9; r++) {\n      for (let c = 0; c < 9; c++) {\n        if (board[r][c] === '.') {\n          for (let d = 1; d <= 9; d++) {\n            const ch = String(d);\n            if (isValid(r, c, ch)) {\n              board[r][c] = ch;\n              if (solve()) return true;\n              board[r][c] = '.';\n            }\n          }\n          return false;\n        }\n      }\n    }\n    return true;\n  }\n  solve();\n  return board;\n}"
   },
   {
     "id": "bt-word-search",
@@ -3656,7 +3724,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Mark visited cell temporarily with \"#\" and restore upon backtracking."
     ],
-    "starterCode": "function exist(board: string[][], word: string): boolean {\n  const m = board.length, n = board[0].length;\n  function dfs(r: number, c: number, k: number): boolean {\n    if (k === word.length) return true;\n    if (r < 0 || c < 0 || r >= m || c >= n || board[r][c] !== word[k]) return false;\n    const tmp = board[r][c];\n    board[r][c] = '#';\n    const found = dfs(r + 1, c, k + 1) || dfs(r - 1, c, k + 1) || dfs(r, c + 1, k + 1) || dfs(r, c - 1, k + 1);\n    board[r][c] = tmp;\n    return found;\n  }\n  for (let r = 0; r < m; r++) {\n    for (let c = 0; c < n; c++) {\n      if (dfs(r, c, 0)) return true;\n    }\n  }\n  return false;\n}",
+    "starterCode": "function exist(board: string[][], word: string): boolean {\n  // Write your solution here\n  \n}",
     "functionName": "exist",
     "testCases": [
       {
@@ -3681,7 +3749,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "DFS grid search",
       "In-place cell marking"
-    ]
+    ],
+    "solutionCode": "function exist(board: string[][], word: string): boolean {\n  const m = board.length, n = board[0].length;\n  function dfs(r: number, c: number, k: number): boolean {\n    if (k === word.length) return true;\n    if (r < 0 || c < 0 || r >= m || c >= n || board[r][c] !== word[k]) return false;\n    const tmp = board[r][c];\n    board[r][c] = '#';\n    const found = dfs(r + 1, c, k + 1) || dfs(r - 1, c, k + 1) || dfs(r, c + 1, k + 1) || dfs(r, c - 1, k + 1);\n    board[r][c] = tmp;\n    return found;\n  }\n  for (let r = 0; r < m; r++) {\n    for (let c = 0; c < n; c++) {\n      if (dfs(r, c, 0)) return true;\n    }\n  }\n  return false;\n}"
   },
   {
     "id": "bt-permutations",
@@ -3708,7 +3777,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Swap characters or build prefix with visited set."
     ],
-    "starterCode": "function permuteString(s: string): string[] {\n  const res: string[] = [];\n  const chars = s.split('').sort();\n  const used = new Array(chars.length).fill(false);\n  function backtrack(curr: string) {\n    if (curr.length === chars.length) { res.push(curr); return; }\n    for (let i = 0; i < chars.length; i++) {\n      if (used[i]) continue;\n      if (i > 0 && chars[i] === chars[i - 1] && !used[i - 1]) continue;\n      used[i] = true;\n      backtrack(curr + chars[i]);\n      used[i] = false;\n    }\n  }\n  backtrack('');\n  return res;\n}",
+    "starterCode": "function permuteString(s: string): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "permuteString",
     "testCases": [
       {
@@ -3733,7 +3802,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Permutation generation",
       "Lexicographical sorting"
-    ]
+    ],
+    "solutionCode": "function permuteString(s: string): string[] {\n  const res: string[] = [];\n  const chars = s.split('').sort();\n  const used = new Array(chars.length).fill(false);\n  function backtrack(curr: string) {\n    if (curr.length === chars.length) { res.push(curr); return; }\n    for (let i = 0; i < chars.length; i++) {\n      if (used[i]) continue;\n      if (i > 0 && chars[i] === chars[i - 1] && !used[i - 1]) continue;\n      used[i] = true;\n      backtrack(curr + chars[i]);\n      used[i] = false;\n    }\n  }\n  backtrack('');\n  return res;\n}"
   },
   {
     "id": "bt-subsets",
@@ -3761,7 +3831,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "At each element, choose whether to include it in the current subset."
     ],
-    "starterCode": "function subsets(nums: number[]): number[][] {\n  const res: number[][] = [];\n  function backtrack(start: number, curr: number[]) {\n    res.push(curr.slice());\n    for (let i = start; i < nums.length; i++) {\n      curr.push(nums[i]);\n      backtrack(i + 1, curr);\n      curr.pop();\n    }\n  }\n  backtrack(0, []);\n  return res;\n}",
+    "starterCode": "function subsets(nums: number[]): number[][] {\n  // Write your solution here\n  \n}",
     "functionName": "subsets",
     "testCases": [
       {
@@ -3786,7 +3856,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Power set size 2^N",
       "Backtracking state recursion"
-    ]
+    ],
+    "solutionCode": "function subsets(nums: number[]): number[][] {\n  const res: number[][] = [];\n  function backtrack(start: number, curr: number[]) {\n    res.push(curr.slice());\n    for (let i = start; i < nums.length; i++) {\n      curr.push(nums[i]);\n      backtrack(i + 1, curr);\n      curr.pop();\n    }\n  }\n  backtrack(0, []);\n  return res;\n}"
   },
   {
     "id": "bt-combination-sum",
@@ -3815,7 +3886,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Include current element and recurse on same index, or skip to next index."
     ],
-    "starterCode": "function combinationSum(candidates: number[], target: number): number[][] {\n  const res: number[][] = [];\n  candidates.sort((a, b) => a - b);\n  function backtrack(start: number, curr: number[], remain: number) {\n    if (remain === 0) { res.push(curr.slice()); return; }\n    for (let i = start; i < candidates.length; i++) {\n      if (candidates[i] > remain) break;\n      curr.push(candidates[i]);\n      backtrack(i, curr, remain - candidates[i]);\n      curr.pop();\n    }\n  }\n  backtrack(0, [], target);\n  return res;\n}",
+    "starterCode": "function combinationSum(candidates: number[], target: number): number[][] {\n  // Write your solution here\n  \n}",
     "functionName": "combinationSum",
     "testCases": [
       {
@@ -3840,7 +3911,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Pruning when candidate > remain",
       "Duplicate combination avoidance"
-    ]
+    ],
+    "solutionCode": "function combinationSum(candidates: number[], target: number): number[][] {\n  const res: number[][] = [];\n  candidates.sort((a, b) => a - b);\n  function backtrack(start: number, curr: number[], remain: number) {\n    if (remain === 0) { res.push(curr.slice()); return; }\n    for (let i = start; i < candidates.length; i++) {\n      if (candidates[i] > remain) break;\n      curr.push(candidates[i]);\n      backtrack(i, curr, remain - candidates[i]);\n      curr.pop();\n    }\n  }\n  backtrack(0, [], target);\n  return res;\n}"
   },
   {
     "id": "bt-rat-in-maze",
@@ -3867,7 +3939,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Traverse D, L, R, U in alphabetical order to naturally sort paths."
     ],
-    "starterCode": "function findPath(m: number[][], n: number): string[] {\n  const res: string[] = [];\n  if (m[0][0] === 0 || m[n - 1][n - 1] === 0) return res;\n  const visited = Array.from({ length: n }, () => new Array(n).fill(false));\n  const dirs = [['D', 1, 0], ['L', 0, -1], ['R', 0, 1], ['U', -1, 0]] as const;\n  function dfs(r: number, c: number, path: string) {\n    if (r === n - 1 && c === n - 1) { res.push(path); return; }\n    visited[r][c] = true;\n    for (const [ch, dr, dc] of dirs) {\n      const nr = r + dr, nc = c + dc;\n      if (nr >= 0 && nc >= 0 && nr < n && nc < n && !visited[nr][nc] && m[nr][nc] === 1) {\n        dfs(nr, nc, path + ch);\n      }\n    }\n    visited[r][c] = false;\n  }\n  dfs(0, 0, '');\n  return res;\n}",
+    "starterCode": "function findPath(m: number[][], n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "findPath",
     "testCases": [
       {
@@ -3892,7 +3964,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Directional exploration D-L-R-U",
       "Backtracking state cleanup"
-    ]
+    ],
+    "solutionCode": "function findPath(m: number[][], n: number): string[] {\n  const res: string[] = [];\n  if (m[0][0] === 0 || m[n - 1][n - 1] === 0) return res;\n  const visited = Array.from({ length: n }, () => new Array(n).fill(false));\n  const dirs = [['D', 1, 0], ['L', 0, -1], ['R', 0, 1], ['U', -1, 0]] as const;\n  function dfs(r: number, c: number, path: string) {\n    if (r === n - 1 && c === n - 1) { res.push(path); return; }\n    visited[r][c] = true;\n    for (const [ch, dr, dc] of dirs) {\n      const nr = r + dr, nc = c + dc;\n      if (nr >= 0 && nc >= 0 && nr < n && nc < n && !visited[nr][nc] && m[nr][nc] === 1) {\n        dfs(nr, nc, path + ch);\n      }\n    }\n    visited[r][c] = false;\n  }\n  dfs(0, 0, '');\n  return res;\n}"
   },
   {
     "id": "bt-palindrome-partitioning",
@@ -3921,7 +3994,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Check if prefix s[start..i] is palindrome before recursing on remaining suffix."
     ],
-    "starterCode": "function partition(s: string): string[][] {\n  const res: string[][] = [];\n  function isPal(l: number, r: number): boolean {\n    while (l < r) if (s[l++] !== s[r--]) return false;\n    return true;\n  }\n  function backtrack(start: number, curr: string[]) {\n    if (start === s.length) { res.push(curr.slice()); return; }\n    for (let end = start; end < s.length; end++) {\n      if (isPal(start, end)) {\n        curr.push(s.substring(start, end + 1));\n        backtrack(end + 1, curr);\n        curr.pop();\n      }\n    }\n  }\n  backtrack(0, []);\n  return res;\n}",
+    "starterCode": "function partition(s: string): string[][] {\n  // Write your solution here\n  \n}",
     "functionName": "partition",
     "testCases": [
       {
@@ -3946,7 +4019,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Substring palindrome verification",
       "Backtracking branch traversal"
-    ]
+    ],
+    "solutionCode": "function partition(s: string): string[][] {\n  const res: string[][] = [];\n  function isPal(l: number, r: number): boolean {\n    while (l < r) if (s[l++] !== s[r--]) return false;\n    return true;\n  }\n  function backtrack(start: number, curr: string[]) {\n    if (start === s.length) { res.push(curr.slice()); return; }\n    for (let end = start; end < s.length; end++) {\n      if (isPal(start, end)) {\n        curr.push(s.substring(start, end + 1));\n        backtrack(end + 1, curr);\n        curr.pop();\n      }\n    }\n  }\n  backtrack(0, []);\n  return res;\n}"
   },
   {
     "id": "bt-knights-tour",
@@ -3973,7 +4047,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "8 possible L-shaped knight moves from each square."
     ],
-    "starterCode": "function knightTour(N: number): number[][] {\n  if (N === 1) return [[0]];\n  const board = Array.from({ length: N }, () => new Array(N).fill(-1));\n  const moves = [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]];\n  board[0][0] = 0;\n  function solve(r: number, c: number, count: number): boolean {\n    if (count === N * N) return true;\n    for (const [dr, dc] of moves) {\n      const nr = r + dr, nc = c + dc;\n      if (nr >= 0 && nc >= 0 && nr < N && nc < N && board[nr][nc] === -1) {\n        board[nr][nc] = count;\n        if (solve(nr, nc, count + 1)) return true;\n        board[nr][nc] = -1;\n      }\n    }\n    return false;\n  }\n  if (!solve(0, 0, 1)) board[0][0] = -1;\n  return board;\n}",
+    "starterCode": "function knightTour(N: number): number[][] {\n  // Write your solution here\n  \n}",
     "functionName": "knightTour",
     "testCases": [
       {
@@ -3998,7 +4072,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "8 knight move offsets",
       "Full board occupancy verification"
-    ]
+    ],
+    "solutionCode": "function knightTour(N: number): number[][] {\n  if (N === 1) return [[0]];\n  const board = Array.from({ length: N }, () => new Array(N).fill(-1));\n  const moves = [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]];\n  board[0][0] = 0;\n  function solve(r: number, c: number, count: number): boolean {\n    if (count === N * N) return true;\n    for (const [dr, dc] of moves) {\n      const nr = r + dr, nc = c + dc;\n      if (nr >= 0 && nc >= 0 && nr < N && nc < N && board[nr][nc] === -1) {\n        board[nr][nc] = count;\n        if (solve(nr, nc, count + 1)) return true;\n        board[nr][nc] = -1;\n      }\n    }\n    return false;\n  }\n  if (!solve(0, 0, 1)) board[0][0] = -1;\n  return board;\n}"
   },
   {
     "id": "pattern-diamond",
@@ -4028,7 +4103,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Print top half of pyramid first, then inverted bottom half."
     ],
-    "starterCode": "function generateDiamond(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    res.push(' '.repeat(n - i) + '* '.repeat(i).trimEnd());\n  }\n  for (let i = n - 1; i >= 1; i--) {\n    res.push(' '.repeat(n - i) + '* '.repeat(i).trimEnd());\n  }\n  return res;\n}",
+    "starterCode": "function generateDiamond(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generateDiamond",
     "testCases": [
       {
@@ -4053,7 +4128,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Symmetrical star alignment",
       "Correct leading spaces"
-    ]
+    ],
+    "solutionCode": "function generateDiamond(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    res.push(' '.repeat(n - i) + '* '.repeat(i).trimEnd());\n  }\n  for (let i = n - 1; i >= 1; i--) {\n    res.push(' '.repeat(n - i) + '* '.repeat(i).trimEnd());\n  }\n  return res;\n}"
   },
   {
     "id": "pattern-number-triangle",
@@ -4081,7 +4157,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "For row i, join numbers from 1 to i with spaces."
     ],
-    "starterCode": "function generateNumberTriangle(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    const row: number[] = [];\n    for (let j = 1; j <= i; j++) row.push(j);\n    res.push(row.join(' '));\n  }\n  return res;\n}",
+    "starterCode": "function generateNumberTriangle(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generateNumberTriangle",
     "testCases": [
       {
@@ -4106,7 +4182,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Consecutive numbers",
       "Space separated formatting"
-    ]
+    ],
+    "solutionCode": "function generateNumberTriangle(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    const row: number[] = [];\n    for (let j = 1; j <= i; j++) row.push(j);\n    res.push(row.join(' '));\n  }\n  return res;\n}"
   },
   {
     "id": "pattern-same-number-triangle",
@@ -4134,7 +4211,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Repeat number i, i times."
     ],
-    "starterCode": "function generateSameNumberTriangle(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    res.push(new Array(i).fill(i).join(' '));\n  }\n  return res;\n}",
+    "starterCode": "function generateSameNumberTriangle(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generateSameNumberTriangle",
     "testCases": [
       {
@@ -4159,7 +4236,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Row number replication",
       "Accurate row length"
-    ]
+    ],
+    "solutionCode": "function generateSameNumberTriangle(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    res.push(new Array(i).fill(i).join(' '));\n  }\n  return res;\n}"
   },
   {
     "id": "pattern-alphabet-triangle",
@@ -4186,7 +4264,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Use `String.fromCharCode(65 + j)` to get uppercase characters."
     ],
-    "starterCode": "function generateAlphabetTriangle(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    const row: string[] = [];\n    for (let j = 0; j < i; j++) row.push(String.fromCharCode(65 + j));\n    res.push(row.join(' '));\n  }\n  return res;\n}",
+    "starterCode": "function generateAlphabetTriangle(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generateAlphabetTriangle",
     "testCases": [
       {
@@ -4211,7 +4289,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Character code conversion",
       "Alphabet sequence"
-    ]
+    ],
+    "solutionCode": "function generateAlphabetTriangle(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    const row: string[] = [];\n    for (let j = 0; j < i; j++) row.push(String.fromCharCode(65 + j));\n    res.push(row.join(' '));\n  }\n  return res;\n}"
   },
   {
     "id": "pattern-floyds-triangle",
@@ -4239,7 +4318,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Maintain global counter incremented with each printed number."
     ],
-    "starterCode": "function generateFloydsTriangle(n: number): string[] {\n  const res: string[] = [];\n  let count = 1;\n  for (let i = 1; i <= n; i++) {\n    const row: number[] = [];\n    for (let j = 1; j <= i; j++) row.push(count++);\n    res.push(row.join(' '));\n  }\n  return res;\n}",
+    "starterCode": "function generateFloydsTriangle(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generateFloydsTriangle",
     "testCases": [
       {
@@ -4264,7 +4343,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Consecutive integer progression",
       "Row counter advancement"
-    ]
+    ],
+    "solutionCode": "function generateFloydsTriangle(n: number): string[] {\n  const res: string[] = [];\n  let count = 1;\n  for (let i = 1; i <= n; i++) {\n    const row: number[] = [];\n    for (let j = 1; j <= i; j++) row.push(count++);\n    res.push(row.join(' '));\n  }\n  return res;\n}"
   },
   {
     "id": "pattern-pascals-triangle",
@@ -4293,7 +4373,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Each number is the sum of the two numbers directly above it."
     ],
-    "starterCode": "function generatePascalsTriangle(n: number): string[] {\n  const rows: number[][] = [];\n  for (let i = 0; i < n; i++) {\n    const row = new Array(i + 1).fill(1);\n    for (let j = 1; j < i; j++) row[j] = rows[i - 1][j - 1] + rows[i - 1][j];\n    rows.push(row);\n  }\n  return rows.map(r => r.join(' '));\n}",
+    "starterCode": "function generatePascalsTriangle(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generatePascalsTriangle",
     "testCases": [
       {
@@ -4318,7 +4398,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Combinatorial sum rule",
       "Boundary 1s"
-    ]
+    ],
+    "solutionCode": "function generatePascalsTriangle(n: number): string[] {\n  const rows: number[][] = [];\n  for (let i = 0; i < n; i++) {\n    const row = new Array(i + 1).fill(1);\n    for (let j = 1; j < i; j++) row[j] = rows[i - 1][j - 1] + rows[i - 1][j];\n    rows.push(row);\n  }\n  return rows.map(r => r.join(' '));\n}"
   },
   {
     "id": "pattern-hollow-square",
@@ -4345,7 +4426,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "First and last rows are full stars. Intermediate rows have stars only at edges."
     ],
-    "starterCode": "function generateHollowSquare(n: number): string[] {\n  if (n <= 0) return [];\n  if (n === 1) return ['*'];\n  const res: string[] = [];\n  res.push('* '.repeat(n).trimEnd());\n  for (let i = 2; i < n; i++) {\n    res.push('*' + ' '.repeat(2 * n - 3) + '*');\n  }\n  res.push('* '.repeat(n).trimEnd());\n  return res;\n}",
+    "starterCode": "function generateHollowSquare(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generateHollowSquare",
     "testCases": [
       {
@@ -4370,7 +4451,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Boundary star placement",
       "Hollow center spacing"
-    ]
+    ],
+    "solutionCode": "function generateHollowSquare(n: number): string[] {\n  if (n <= 0) return [];\n  if (n === 1) return ['*'];\n  const res: string[] = [];\n  res.push('* '.repeat(n).trimEnd());\n  for (let i = 2; i < n; i++) {\n    res.push('*' + ' '.repeat(2 * n - 3) + '*');\n  }\n  res.push('* '.repeat(n).trimEnd());\n  return res;\n}"
   },
   {
     "id": "pattern-hollow-triangle",
@@ -4397,7 +4479,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Hypotenuse, left vertical edge, and bottom horizontal edge have stars."
     ],
-    "starterCode": "function generateHollowTriangle(n: number): string[] {\n  if (n <= 0) return [];\n  if (n === 1) return ['*'];\n  const res: string[] = ['*'];\n  for (let i = 2; i < n; i++) {\n    res.push('*' + ' '.repeat(2 * i - 3) + '*');\n  }\n  res.push('* '.repeat(n).trimEnd());\n  return res;\n}",
+    "starterCode": "function generateHollowTriangle(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generateHollowTriangle",
     "testCases": [
       {
@@ -4422,7 +4504,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Hollow interior",
       "Solid boundary edges"
-    ]
+    ],
+    "solutionCode": "function generateHollowTriangle(n: number): string[] {\n  if (n <= 0) return [];\n  if (n === 1) return ['*'];\n  const res: string[] = ['*'];\n  for (let i = 2; i < n; i++) {\n    res.push('*' + ' '.repeat(2 * i - 3) + '*');\n  }\n  res.push('* '.repeat(n).trimEnd());\n  return res;\n}"
   },
   {
     "id": "pattern-reversed-alphabet-triangle",
@@ -4449,7 +4532,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Start from char code 65 + n - 1 and decrement across columns."
     ],
-    "starterCode": "function generateReversedAlphabetTriangle(n: number): string[] {\n  const res: string[] = [];\n  const startChar = 65 + n - 1;\n  for (let i = 1; i <= n; i++) {\n    const row: string[] = [];\n    for (let j = 0; j < i; j++) {\n      row.push(String.fromCharCode(startChar - j));\n    }\n    res.push(row.join(' '));\n  }\n  return res;\n}",
+    "starterCode": "function generateReversedAlphabetTriangle(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generateReversedAlphabetTriangle",
     "testCases": [
       {
@@ -4474,7 +4557,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Decreasing letter sequence",
       "Correct start offset"
-    ]
+    ],
+    "solutionCode": "function generateReversedAlphabetTriangle(n: number): string[] {\n  const res: string[] = [];\n  const startChar = 65 + n - 1;\n  for (let i = 1; i <= n; i++) {\n    const row: string[] = [];\n    for (let j = 0; j < i; j++) {\n      row.push(String.fromCharCode(startChar - j));\n    }\n    res.push(row.join(' '));\n  }\n  return res;\n}"
   },
   {
     "id": "pattern-checkerboard",
@@ -4501,7 +4585,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Check if (r + c) is even for solid square and odd for open square."
     ],
-    "starterCode": "function generateCheckerboard(n: number): string[] {\n  const res: string[] = [];\n  for (let r = 0; r < n; r++) {\n    const row: string[] = [];\n    for (let c = 0; c < n; c++) {\n      row.push((r + c) % 2 === 0 ? '■' : '□');\n    }\n    res.push(row.join(' '));\n  }\n  return res;\n}",
+    "starterCode": "function generateCheckerboard(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "generateCheckerboard",
     "testCases": [
       {
@@ -4526,7 +4610,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Parity check (r + c) % 2",
       "Alternating symbols"
-    ]
+    ],
+    "solutionCode": "function generateCheckerboard(n: number): string[] {\n  const res: string[] = [];\n  for (let r = 0; r < n; r++) {\n    const row: string[] = [];\n    for (let c = 0; c < n; c++) {\n      row.push((r + c) % 2 === 0 ? '■' : '□');\n    }\n    res.push(row.join(' '));\n  }\n  return res;\n}"
   },
   {
     "id": "pattern-hollow-diamond",
@@ -4554,7 +4639,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Outer spaces and inner spaces formulas for top and bottom halves."
     ],
-    "starterCode": "function printHollowDiamond(n: number): string[] {\n  if (n === 1) return ['*'];\n  const res: string[] = [];\n  res.push(' '.repeat(n - 1) + '*');\n  for (let i = 2; i <= n; i++) {\n    const outSpaces = ' '.repeat(n - i);\n    const inSpaces = ' '.repeat(2 * i - 3);\n    res.push(outSpaces + '*' + inSpaces + '*');\n  }\n  for (let i = n - 1; i >= 2; i--) {\n    const outSpaces = ' '.repeat(n - i);\n    const inSpaces = ' '.repeat(2 * i - 3);\n    res.push(outSpaces + '*' + inSpaces + '*');\n  }\n  res.push(' '.repeat(n - 1) + '*');\n  return res;\n}",
+    "starterCode": "function printHollowDiamond(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "printHollowDiamond",
     "testCases": [
       {
@@ -4579,7 +4664,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Hollow diamond geometry",
       "Boundary edge case"
-    ]
+    ],
+    "solutionCode": "function printHollowDiamond(n: number): string[] {\n  if (n === 1) return ['*'];\n  const res: string[] = [];\n  res.push(' '.repeat(n - 1) + '*');\n  for (let i = 2; i <= n; i++) {\n    const outSpaces = ' '.repeat(n - i);\n    const inSpaces = ' '.repeat(2 * i - 3);\n    res.push(outSpaces + '*' + inSpaces + '*');\n  }\n  for (let i = n - 1; i >= 2; i--) {\n    const outSpaces = ' '.repeat(n - i);\n    const inSpaces = ' '.repeat(2 * i - 3);\n    res.push(outSpaces + '*' + inSpaces + '*');\n  }\n  res.push(' '.repeat(n - 1) + '*');\n  return res;\n}"
   },
   {
     "id": "pattern-cross-x",
@@ -4606,7 +4692,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "At position (r, c), place `*` if `r === c` or `r + c === n - 1`."
     ],
-    "starterCode": "function printCrossX(n: number): string[] {\n  const res: string[] = [];\n  for (let r = 0; r < n; r++) {\n    let row = '';\n    for (let c = 0; c < n; c++) {\n      if (r === c || r + c === n - 1) row += '*';\n      else row += ' ';\n    }\n    res.push(row);\n  }\n  return res;\n}",
+    "starterCode": "function printCrossX(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "printCrossX",
     "testCases": [
       {
@@ -4631,7 +4717,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Diagonal index condition",
       "Exact spacing"
-    ]
+    ],
+    "solutionCode": "function printCrossX(n: number): string[] {\n  const res: string[] = [];\n  for (let r = 0; r < n; r++) {\n    let row = '';\n    for (let c = 0; c < n; c++) {\n      if (r === c || r + c === n - 1) row += '*';\n      else row += ' ';\n    }\n    res.push(row);\n  }\n  return res;\n}"
   },
   {
     "id": "pattern-zigzag-char",
@@ -4658,7 +4745,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Cycle through rows 0 to n-1 then back to 0."
     ],
-    "starterCode": "function printZigZagChars(s: string, numRows: number): string[] {\n  if (numRows === 1 || s.length <= numRows) return [s];\n  const rows: string[] = new Array(numRows).fill('');\n  let curRow = 0, goingDown = false;\n  for (const c of s) {\n    rows[curRow] += c;\n    if (curRow === 0 || curRow === numRows - 1) goingDown = !goingDown;\n    curRow += goingDown ? 1 : -1;\n  }\n  return rows;\n}",
+    "starterCode": "function printZigZagChars(s: string, numRows: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "printZigZagChars",
     "testCases": [
       {
@@ -4683,7 +4770,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Zig-zag direction flip",
       "Multi-row assembly"
-    ]
+    ],
+    "solutionCode": "function printZigZagChars(s: string, numRows: number): string[] {\n  if (numRows === 1 || s.length <= numRows) return [s];\n  const rows: string[] = new Array(numRows).fill('');\n  let curRow = 0, goingDown = false;\n  for (const c of s) {\n    rows[curRow] += c;\n    if (curRow === 0 || curRow === numRows - 1) goingDown = !goingDown;\n    curRow += goingDown ? 1 : -1;\n  }\n  return rows;\n}"
   },
   {
     "id": "pattern-pyramid-stars",
@@ -4711,7 +4799,7 @@ export const QUESTION_BANK: Question[] = [
     "hints": [
       "Space count: n - i; Star count: 2*i - 1."
     ],
-    "starterCode": "function printCenteredPyramid(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    const spaces = ' '.repeat(n - i);\n    const stars = '*'.repeat(2 * i - 1);\n    res.push(spaces + stars);\n  }\n  return res;\n}",
+    "starterCode": "function printCenteredPyramid(n: number): string[] {\n  // Write your solution here\n  \n}",
     "functionName": "printCenteredPyramid",
     "testCases": [
       {
@@ -4736,7 +4824,8 @@ export const QUESTION_BANK: Question[] = [
     "rubricCriteria": [
       "Center alignment formula",
       "Clean string generation"
-    ]
+    ],
+    "solutionCode": "function printCenteredPyramid(n: number): string[] {\n  const res: string[] = [];\n  for (let i = 1; i <= n; i++) {\n    const spaces = ' '.repeat(n - i);\n    const stars = '*'.repeat(2 * i - 1);\n    res.push(spaces + stars);\n  }\n  return res;\n}"
   },
   {
     "id": "cs-mcq-os-deadlock",
@@ -9064,7 +9153,8 @@ export const QUESTION_BANK: Question[] = [
       "Base62 key generation",
       "Redis caching strategy",
       "Database sharding"
-    ]
+    ],
+    "solutionCode": "/**\n * System Design: URL Shortener (TinyURL)\n *\n * 1. Functional & Non-Functional Requirements\n * 2. Capacity Estimation (Traffic, Storage, Memory)\n * 3. API Endpoints (POST /api/v1/shorten, GET /{shortUrl})\n * 4. High-Level Architecture (LB, App Servers, Redis, DB)\n * 5. Deep-Dive: ID Generation Strategy (Base62 vs Snowflake)\n */\n"
   },
   {
     "id": "beh-conflict-star",
@@ -9096,6 +9186,7 @@ export const QUESTION_BANK: Question[] = [
       "Structured STAR format",
       "Objective data-driven resolution",
       "Positive team outcome"
-    ]
+    ],
+    "solutionCode": "/**\n * Behavioral STAR Response Structure:\n * - Situation:\n * - Task:\n * - Action:\n * - Result:\n */\n"
   }
 ];

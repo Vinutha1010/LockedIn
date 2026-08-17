@@ -693,6 +693,26 @@ export const Questions: FC = () => {
                   <div className="rounded-2xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs text-slate-200 overflow-x-auto max-h-[220px] shadow-inner">
                     <pre>{previewQuestion.starterCode}</pre>
                   </div>
+
+                  {/* Optional Reference Solution Toggle */}
+                  {previewQuestion.solutionCode && (
+                    <div className="pt-1">
+                      <button
+                        onClick={() => setShowPreviewSolution(!showPreviewSolution)}
+                        className="px-3.5 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 hover:text-emerald-200 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{showPreviewSolution ? 'Hide Reference Solution' : 'Reveal Reference Solution'}</span>
+                      </button>
+
+                      {showPreviewSolution && (
+                        <div className="mt-2.5 rounded-2xl bg-slate-950 border border-emerald-500/40 p-4 font-mono text-xs text-emerald-300 overflow-x-auto max-h-[260px] shadow-inner animate-in fade-in">
+                          <div className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mb-2">Model Reference Solution:</div>
+                          <pre className="text-slate-200">{previewQuestion.solutionCode}</pre>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 

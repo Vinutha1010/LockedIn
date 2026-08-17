@@ -37,6 +37,7 @@ model Question {
   expectedSpaceComplexity String?
   hints                  String?          // JSON array string
   starterCode            String?
+  solutionCode           String?
   languageStarterCodes   String?          // JSON object string
   functionName           String?
   testCases              String?          // JSON array string
