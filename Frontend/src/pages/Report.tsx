@@ -1,5 +1,5 @@
 import { useState, type FC } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import {
   Radar,
   RadarChart,
@@ -11,10 +11,8 @@ import {
   Legend,
 } from 'recharts'
 import {
-  Flame,
   Printer,
   RotateCcw,
-  ArrowLeft,
   Sparkles,
   CheckCircle2,
   AlertCircle,
@@ -34,6 +32,7 @@ import {
   ShieldCheck,
   Cpu,
 } from 'lucide-react'
+import { Navbar } from '@/components/navigation/Navbar'
 import { useInterviewStore } from '@/store/useInterviewStore'
 import type { SessionReport, HiringDecision } from '@/types'
 import { cn } from '@/lib/utils'
@@ -140,6 +139,10 @@ export const Report: FC = () => {
     window.print()
   }
 
+  const handleRetake = () => {
+    navigate('/')
+  }
+
   return (
     <div className="min-h-screen bg-[#070b12] text-slate-100 font-sans selection:bg-cyan-500 selection:text-black pb-20 print:bg-white print:text-black">
       {/* Background Gradients (hidden in print) */}
@@ -149,30 +152,19 @@ export const Report: FC = () => {
         <div className="absolute bottom-[-10%] left-[25%] w-[500px] h-[500px] rounded-full bg-emerald-600/10 blur-[130px]" />
       </div>
 
-      {/* TOP NAVIGATION BAR */}
-      <header className="h-16 border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-xl sticky top-0 z-30 px-6 flex items-center justify-between print:hidden">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-750 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-all"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Dashboard</span>
-          </button>
+      {/* UNIFIED NAVBAR */}
+      <div className="print:hidden">
+        <Navbar />
+      </div>
 
-          <div className="h-4 w-[1px] bg-slate-800" />
-
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-[0_0_12px_rgba(99,102,241,0.5)]">
-              <Flame className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-extrabold text-sm tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
-              LockedIn
-            </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 font-mono">
-              Evaluation Report
-            </span>
-          </div>
+      {/* REPORT SUB-HEADER ACTION BAR */}
+      <div className="border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-md px-6 py-3 flex items-center justify-between print:hidden">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider">
+            Evaluation Report
+          </span>
+          <span className="text-slate-600">•</span>
+          <span className="text-xs text-slate-400">Multi-Dimensional Performance Analytics</span>
         </div>
 
         <div className="flex items-center gap-2.5">
@@ -193,15 +185,15 @@ export const Report: FC = () => {
             <span>Export / Print PDF</span>
           </button>
 
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-xs font-semibold text-white transition-all shadow-[0_0_20px_-3px_rgba(6,182,212,0.4)]"
+          <button
+            onClick={handleRetake}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-xs font-semibold text-white transition-all shadow-[0_0_20px_-3px_rgba(6,182,212,0.4)]"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Practice Again</span>
-          </Link>
+            <span>Retake Loop</span>
+          </button>
         </div>
-      </header>
+      </div>
 
       {/* MAIN REPORT CONTAINER */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8 print:p-0 print:max-w-full">

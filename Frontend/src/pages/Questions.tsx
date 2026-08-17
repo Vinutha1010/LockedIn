@@ -1,9 +1,7 @@
-import { useState, useMemo, type FC } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useMemo, useEffect, type FC } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
-  Flame,
   Search,
-  ArrowLeft,
   Sparkles,
   Code2,
   Cpu,
@@ -18,11 +16,11 @@ import {
   Play,
   Copy,
   Check,
-  Zap,
   Award,
   HelpCircle,
   Shapes,
 } from 'lucide-react'
+import { Navbar } from '@/components/navigation/Navbar'
 import { QUESTION_BANK } from '@/data/questions'
 import { useInterviewStore } from '@/store/useInterviewStore'
 import type { Question, RoundType, Difficulty } from '@/types'
@@ -30,14 +28,25 @@ import { cn } from '@/lib/utils'
 
 export const Questions: FC = () => {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { launchQuestionSession } = useInterviewStore()
+
+  // Track from URL query param if present
+  const trackParam = (searchParams.get('track') as RoundType | 'all') || 'all'
 
   // Filter states
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedTrack, setSelectedTrack] = useState<RoundType | 'all'>('all')
+  const [selectedTrack, setSelectedTrack] = useState<RoundType | 'all'>(trackParam)
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | 'all'>('all')
   const [selectedTag, setSelectedTag] = useState<string | 'all'>('all')
   const [selectedCompany, setSelectedCompany] = useState<string | 'all'>('all')
+
+  useEffect(() => {
+    const currentTrack = searchParams.get('track') as RoundType | 'all' | null
+    if (currentTrack && currentTrack !== selectedTrack) {
+      setSelectedTrack(currentTrack)
+    }
+  }, [searchParams])
 
   // Preview drawer state
   const [previewQuestion, setPreviewQuestion] = useState<Question | null>(null)
@@ -159,49 +168,8 @@ export const Questions: FC = () => {
         <div className="absolute bottom-[-10%] left-[20%] w-[500px] h-[500px] rounded-full bg-emerald-600/10 blur-[130px]" />
       </div>
 
-      {/* TOP HEADER BAR */}
-      <header className="h-16 border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-xl sticky top-0 z-30 px-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-750 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-all"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Dashboard</span>
-          </button>
-
-          <div className="h-4 w-[1px] bg-slate-800 hidden sm:block" />
-
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-[0_0_12px_rgba(99,102,241,0.5)]">
-              <Flame className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-extrabold text-sm tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
-              LockedIn
-            </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 font-mono hidden md:inline">
-              Practice Hub
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Link
-            to="/report"
-            className="text-xs text-slate-400 hover:text-slate-200 font-medium px-3 py-1.5 rounded-lg hover:bg-slate-800 transition-colors hidden sm:inline-block"
-          >
-            Past Reports
-          </Link>
-
-          <button
-            onClick={() => navigate('/interview')}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-xs font-semibold text-white transition-all shadow-[0_0_20px_-3px_rgba(6,182,212,0.4)]"
-          >
-            <Zap className="w-3.5 h-3.5" />
-            <span>Launch Mock Loop</span>
-          </button>
-        </div>
-      </header>
+      {/* UNIFIED NAVBAR */}
+      <Navbar />
 
       {/* MAIN CONTAINER */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
@@ -213,7 +181,7 @@ export const Questions: FC = () => {
               {QUESTION_BANK.length} Calibrated Questions
             </span>
             <span className="px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 text-xs">
-              4 Engineering Tracks
+              5 Engineering Tracks
             </span>
             <span className="px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 text-xs">
               FAANG / Tier-1 Tech
@@ -268,7 +236,16 @@ export const Questions: FC = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setSelectedTrack(tab.id as RoundType | 'all')}
+                  onClick={() => {
+                    const newTrack = tab.id as RoundType | 'all'
+                    setSelectedTrack(newTrack)
+                    if (newTrack === 'all') {
+                      searchParams.delete('track')
+                    } else {
+                      searchParams.set('track', newTrack)
+                    }
+                    setSearchParams(searchParams)
+                  }}
                   className={cn(
                     'flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0 transition-all border',
                     isSelected

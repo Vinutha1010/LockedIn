@@ -3,6 +3,8 @@ import { Dashboard } from '@/pages/Dashboard'
 import { InterviewRoom } from '@/pages/InterviewRoom'
 import { Report } from '@/pages/Report'
 import { Questions } from '@/pages/Questions'
+import { Auth } from '@/pages/Auth'
+import { Profile } from '@/pages/Profile'
 import { LockyChatbot } from '@/components/chat/LockyChatbot'
 
 export function App() {
@@ -10,6 +12,10 @@ export function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Auth />} />
+        <Route path="/register" element={<Auth />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/questions" element={<Questions />} />
         <Route path="/interview" element={<InterviewRoom />} />
         <Route path="/interview/:sessionId" element={<InterviewRoom />} />
