@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, type FC } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
-  Flame,
   BookOpen,
   BarChart3,
   User,
