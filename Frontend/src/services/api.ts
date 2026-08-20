@@ -1,7 +1,9 @@
 import type { Question, AnswerFeedback, SessionReport } from '@/types'
 import { QUESTION_BANK as initialQuestions } from '@/data/questions'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+const rawBase = (import.meta.env.VITE_API_URL as string | undefined)?.trim() || 'http://localhost:5000/api'
+const cleanBase = rawBase.replace(/\/+$/, '')
+const API_BASE = cleanBase.endsWith('/api') ? cleanBase : `${cleanBase}/api`
 
 export const api = {
   /**
