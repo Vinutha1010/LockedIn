@@ -42,8 +42,8 @@ export const Navbar: FC = () => {
     <header className="px-4 sm:px-8 lg:px-12 py-3.5 border-b border-slate-800/80 bg-[#070b12]/80 backdrop-blur-xl flex items-center justify-between sticky top-0 z-40 transition-all">
       {/* Brand / Logo */}
       <Link to="/" className="flex items-center gap-2.5 group">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.4)] group-hover:scale-105 transition-transform">
-          <Flame className="w-5 h-5 text-white" />
+        <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)] border border-cyan-500/40 group-hover:scale-105 transition-transform bg-[#070b12]">
+          <img src="/logo.jpg" alt="LockedIn Logo" className="w-full h-full object-cover" />
         </div>
         <div>
           <div className="flex items-center gap-1.5">
